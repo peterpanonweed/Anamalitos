@@ -3,501 +3,873 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Clínica Veterinaria / Veterinary Clinic</title>
+<title>Annamalitos – Clínica Veterinaria</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #f7f6f2;
-    --surface: #ffffff;
-    --surface2: #f0ede6;
-    --border: #ddd9ce;
-    --border2: #c8c3b5;
-    --text: #1a1917;
-    --text2: #5a5750;
-    --text3: #9a9690;
-    --accent: #2d6a4f;
-    --accent-light: #e8f5ee;
-    --accent-border: #a8d5bc;
-    --info: #1a5276;
-    --info-bg: #eaf2fb;
-    --success-bg: #e8f5ee;
-    --success-border: #a8d5bc;
-    --success-text: #1a5c35;
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
-  body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; color: var(--text); line-height: 1.6; min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f7f6f2; --surface: #ffffff; --surface2: #f0ede6;
+  --border: #ddd9ce; --border2: #c8c3b5;
+  --text: #1a1917; --text2: #5a5750; --text3: #9a9690;
+  --accent: #2d6a4f; --accent-light: #e8f5ee; --accent-border: #a8d5bc;
+  --info: #1a5276; --info-bg: #eaf2fb; --info-border: #b5d4f4;
+  --warn-bg: #faeeda; --warn-border: #fac775; --warn-text: #633806;
+  --success-bg: #e8f5ee; --success-border: #a8d5bc; --success-text: #1a5c35;
+  --danger-bg: #fcebeb; --danger-border: #f09595; --danger-text: #a32d2d;
+  --radius: 10px; --radius-sm: 6px;
+}
+body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; color: var(--text); line-height: 1.6; min-height: 100vh; }
 
-  /* LANG SWITCHER */
-  .lang-bar { background: var(--accent); color: #fff; display: flex; justify-content: flex-end; align-items: center; padding: 8px 24px; gap: 8px; font-size: 13px; }
-  .lang-btn { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 4px 14px; border-radius: 99px; cursor: pointer; font-size: 13px; transition: background 0.15s; }
-  .lang-btn.active, .lang-btn:hover { background: rgba(255,255,255,0.25); }
+/* NAV TABS */
+.top-bar { background: var(--accent); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+.nav-tabs { display: flex; gap: 0; }
+.nav-tab { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 14px 20px; cursor: pointer; font-size: 14px; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.15s; }
+.nav-tab:hover { color: #fff; }
+.nav-tab.active { color: #fff; border-bottom-color: #fff; }
+.lang-btns { display: flex; gap: 6px; }
+.lang-btn { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 4px 12px; border-radius: 99px; cursor: pointer; font-size: 12px; transition: background 0.15s; }
+.lang-btn.active, .lang-btn:hover { background: rgba(255,255,255,0.25); }
 
-  .page { max-width: 820px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+/* PAGES */
+.page { display: none; max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.page.active { display: block; }
 
-  /* HERO */
-  .hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; align-items: stretch; margin-bottom: 2rem; }
-  .hero-text { padding: 2rem; flex: 1; }
-  .hero-text h1 { font-size: 24px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
-  .hero-text p { font-size: 14px; color: var(--text2); line-height: 1.7; }
-  .hero-animals { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 1.5rem 1.25rem; background: var(--accent-light); border-left: 1px solid var(--accent-border); }
-  .animal-row { display: flex; gap: 6px; }
-  .animal-emoji { font-size: 22px; background: #fff; border-radius: var(--radius-sm); padding: 10px; border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; }
+/* HERO */
+.hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; align-items: stretch; margin-bottom: 2rem; }
+.hero-text { padding: 2rem; flex: 1; }
+.hero-text h1 { font-size: 24px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.hero-text p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+.hero-animals { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 1.5rem 1.25rem; background: var(--accent-light); border-left: 1px solid var(--accent-border); }
+.animal-row { display: flex; gap: 6px; }
+.animal-emoji { font-size: 22px; background: #fff; border-radius: var(--radius-sm); padding: 10px; border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; }
 
-  /* PROGRESS */
-  .progress-wrap { margin-bottom: 2rem; }
-  .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
-  .progress-bar { display: flex; gap: 4px; }
-  .progress-step { flex: 1; height: 4px; border-radius: 99px; background: var(--border); transition: background 0.3s; }
-  .progress-step.active { background: var(--accent); }
+/* PROGRESS */
+.progress-wrap { margin-bottom: 2rem; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.progress-bar { display: flex; gap: 4px; }
+.progress-step { flex: 1; height: 4px; border-radius: 99px; background: var(--border); transition: background 0.3s; }
+.progress-step.active { background: var(--accent); }
 
-  /* CARDS */
-  .section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
-  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; padding-bottom: 0.875rem; border-bottom: 1px solid var(--border); }
-  .section-icon { font-size: 18px; width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--accent-light); border: 1px solid var(--accent-border); }
-  .section-title { font-size: 16px; font-weight: 600; color: var(--text); }
+/* CARDS */
+.section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; padding-bottom: 0.875rem; border-bottom: 1px solid var(--border); }
+.section-icon { font-size: 18px; width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--accent-light); border: 1px solid var(--accent-border); }
+.section-title { font-size: 16px; font-weight: 600; color: var(--text); }
 
-  /* FORM */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .full { grid-column: 1 / -1; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; }
-  .field input, .field select, .field textarea {
-    font-size: 14px; font-family: inherit; padding: 9px 12px;
-    border-radius: var(--radius-sm); border: 1px solid var(--border2);
-    background: var(--surface); color: var(--text); width: 100%;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
-  }
-  .field textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; }
+.field input, .field select, .field textarea {
+  font-size: 14px; font-family: inherit; padding: 9px 12px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border2);
+  background: var(--surface); color: var(--text); width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,106,79,0.12);
+}
+.field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
 
-  /* TAGS */
-  .tag-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .tag { font-size: 12px; padding: 5px 12px; border-radius: 99px; border: 1px solid var(--border2); background: var(--surface2); color: var(--text2); cursor: pointer; transition: all 0.12s; user-select: none; }
-  .tag:hover { border-color: var(--accent); color: var(--accent); }
-  .tag.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+/* TAGS */
+.tag-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { font-size: 12px; padding: 5px 12px; border-radius: 99px; border: 1px solid var(--border2); background: var(--surface2); color: var(--text2); cursor: pointer; transition: all 0.12s; user-select: none; }
+.tag:hover { border-color: var(--accent); color: var(--accent); }
+.tag.selected { background: var(--accent-light); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-  /* SERVICES */
-  .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .service-item { display: flex; align-items: center; gap: 10px; padding: 11px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
-  .service-item:hover { background: var(--surface2); border-color: var(--border2); }
-  .service-item.selected { border-color: var(--accent); background: var(--accent-light); }
-  .service-item input[type="checkbox"] { width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; }
-  .service-name { font-size: 13px; font-weight: 500; color: var(--text); }
-  .service-price { font-size: 12px; color: var(--text2); }
+/* SERVICES */
+.services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.service-item { display: flex; align-items: center; gap: 10px; padding: 11px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
+.service-item:hover { background: var(--surface2); }
+.service-item.selected { border-color: var(--accent); background: var(--accent-light); }
+.service-item input[type="checkbox"] { width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; }
+.service-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.service-price { font-size: 12px; color: var(--text2); }
 
-  /* INVOICE */
-  .invoice-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.25rem; }
-  .invoice-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-  .invoice-title { font-size: 15px; font-weight: 600; color: var(--text); }
-  .invoice-date { font-size: 12px; color: var(--text3); }
-  .invoice-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
-  .invoice-empty { text-align: center; padding: 1rem 0; font-size: 13px; color: var(--text3); font-style: italic; }
-  .invoice-total-row { display: flex; justify-content: space-between; padding-top: 10px; margin-top: 2px; font-size: 15px; font-weight: 600; color: var(--text); }
-  .invoice-vat { font-size: 12px; color: var(--text2); text-align: right; margin-top: 5px; }
+/* INVOICE */
+.invoice-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+.invoice-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.invoice-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.invoice-date { font-size: 12px; color: var(--text3); }
+.invoice-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+.invoice-empty { text-align: center; padding: 1rem 0; font-size: 13px; color: var(--text3); font-style: italic; }
+.invoice-total-row { display: flex; justify-content: space-between; padding-top: 10px; font-size: 15px; font-weight: 600; color: var(--text); }
+.invoice-vat { font-size: 12px; color: var(--text2); text-align: right; margin-top: 5px; }
 
-  /* SUBMIT */
-  .btn-submit { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s, transform 0.1s; letter-spacing: 0.01em; }
-  .btn-submit:hover { background: #245a42; }
-  .btn-submit:active { transform: scale(0.99); }
+/* BUTTONS */
+.btn { padding: 10px 20px; border-radius: var(--radius-sm); border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #245a42; }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.btn-secondary:hover { background: var(--border); }
+.btn-pdf { background: var(--info-bg); color: var(--info); border: 1px solid var(--info-border); }
+.btn-pdf:hover { background: #d4e9f9; }
+.btn-full { width: 100%; padding: 14px; font-size: 15px; }
+.btn-row { display: flex; gap: 10px; margin-top: 1rem; }
 
-  /* SUCCESS */
-  .success-msg { display: none; background: var(--success-bg); border: 1px solid var(--success-border); border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-top: 1rem; }
-  .success-msg .success-main { font-size: 16px; font-weight: 600; color: var(--success-text); margin-bottom: 6px; }
-  .success-msg .success-sub { font-size: 13px; color: var(--success-text); opacity: 0.8; }
+/* SUCCESS */
+.success-msg { display: none; background: var(--success-bg); border: 1px solid var(--success-border); border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-top: 1rem; }
+.success-main { font-size: 16px; font-weight: 600; color: var(--success-text); margin-bottom: 6px; }
+.success-sub { font-size: 13px; color: var(--success-text); opacity: 0.85; }
 
-  @media (max-width: 600px) {
-    .form-grid, .services-grid { grid-template-columns: 1fr; }
-    .hero { flex-direction: column; }
-    .hero-animals { flex-direction: row; border-left: none; border-top: 1px solid var(--accent-border); }
-    .animal-row { flex: 1; }
-  }
+/* WARN BANNER */
+.warn-banner { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--warn-text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+/* ── APPOINTMENT PAGE ── */
+.calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.cal-nav { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text); }
+.cal-nav:hover { background: var(--border); }
+.cal-month { font-size: 17px; font-weight: 600; color: var(--text); }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 1.5rem; }
+.cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; padding: 4px 0; }
+.cal-day { text-align: center; padding: 10px 4px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.12s; color: var(--text2); }
+.cal-day:hover:not(.empty):not(.past) { background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+.cal-day.selected { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.cal-day.today { font-weight: 700; color: var(--accent); }
+.cal-day.past { color: var(--border2); cursor: default; }
+.cal-day.empty { cursor: default; }
+.cal-day.has-slot { position: relative; }
+.cal-day.has-slot::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.cal-day.selected::after { background: #fff; }
+
+.time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+.time-slot { padding: 10px; text-align: center; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; transition: all 0.12s; color: var(--text2); }
+.time-slot:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.time-slot.selected { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.time-slot.booked { background: var(--surface2); color: var(--border2); cursor: not-allowed; border-color: var(--border); text-decoration: line-through; }
+
+.appt-confirm { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+.appt-confirm-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
+.appt-confirm-row:last-child { border-bottom: none; }
+.appt-confirm-label { color: var(--text2); }
+.appt-confirm-value { font-weight: 500; color: var(--text); }
+
+/* ── PATIENTS PAGE ── */
+.search-bar { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.search-bar input { flex: 1; padding: 10px 14px; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; background: var(--surface); color: var(--text); }
+.search-bar input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,106,79,0.12); }
+.patient-list { display: flex; flex-direction: column; gap: 8px; }
+.patient-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s; }
+.patient-card:hover { border-color: var(--accent-border); }
+.patient-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent-light); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.patient-info { flex: 1; }
+.patient-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.patient-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.patient-badge { font-size: 11px; padding: 3px 10px; border-radius: 99px; background: var(--accent-light); border: 1px solid var(--accent-border); color: var(--accent); font-weight: 600; }
+.patient-detail { display: none; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-top: 8px; }
+.patient-detail.open { display: block; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 1rem; }
+.detail-row { font-size: 13px; }
+.detail-label { color: var(--text2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+.detail-value { color: var(--text); font-weight: 500; }
+
+/* VACCINE REMINDER */
+.reminder-list { display: flex; flex-direction: column; gap: 8px; }
+.reminder-item { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
+.reminder-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dot-red { background: #e24b4a; }
+.dot-amber { background: #ba7517; }
+.dot-green { background: var(--accent); }
+.reminder-pet { font-size: 13px; font-weight: 600; color: var(--text); }
+.reminder-info { font-size: 12px; color: var(--text2); }
+.reminder-due { font-size: 12px; font-weight: 600; margin-left: auto; }
+.due-red { color: #a32d2d; }
+.due-amber { color: #633806; }
+.due-green { color: var(--accent); }
+
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+@media (max-width: 600px) {
+  .form-grid, .services-grid, .time-slots { grid-template-columns: 1fr 1fr; }
+  .hero { flex-direction: column; }
+  .hero-animals { flex-direction: row; border-left: none; border-top: 1px solid var(--accent-border); }
+  .animal-row { flex: 1; }
+  .nav-tab { padding: 12px 12px; font-size: 12px; }
+  .detail-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="lang-bar">
-  <span style="opacity:0.7;font-size:12px;" data-t="lang-label">Idioma / Language:</span>
-  <button class="lang-btn active" onclick="setLang('es')" id="btn-es">🇲🇽 Español</button>
-  <button class="lang-btn" onclick="setLang('en')" id="btn-en">🇬🇧 English</button>
+<!-- TOP NAV -->
+<div class="top-bar">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('registro')" id="tab-registro" data-t="tab1">📋 Registro</button>
+    <button class="nav-tab" onclick="showPage('citas')" id="tab-citas" data-t="tab2">📅 Citas</button>
+    <button class="nav-tab" onclick="showPage('pacientes')" id="tab-pacientes" data-t="tab3">🐾 Pacientes</button>
+    <button class="nav-tab" onclick="showPage('recordatorios')" id="tab-recordatorios" data-t="tab4">🔔 Recordatorios</button>
+  </div>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('es')" id="btn-es">🇲🇽 ES</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en">🇬🇧 EN</button>
+  </div>
 </div>
 
-<div class="page">
-
+<!-- ═══════════════════════════════════════════════
+     PAGE 1 – REGISTRO (Registration Form)
+════════════════════════════════════════════════ -->
+<div class="page active" id="page-registro">
   <div class="hero">
     <div class="hero-text">
-      <h1 data-t="hero-title">Clínica Veterinaria</h1>
+      <h1 data-t="hero-title">Annamalitos</h1>
       <p data-t="hero-sub">Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.</p>
     </div>
     <div class="hero-animals">
-      <div class="animal-row">
-        <div class="animal-emoji">🐕</div>
-        <div class="animal-emoji">🐈</div>
-      </div>
-      <div class="animal-row">
-        <div class="animal-emoji">🐇</div>
-        <div class="animal-emoji">🐦</div>
-      </div>
+      <div class="animal-row"><div class="animal-emoji">🐕</div><div class="animal-emoji">🐈</div></div>
+      <div class="animal-row"><div class="animal-emoji">🐇</div><div class="animal-emoji">🐦</div></div>
     </div>
   </div>
 
   <div class="progress-wrap">
     <div class="progress-labels">
-      <span data-t="prog1">Datos del cliente</span>
-      <span data-t="prog2">Datos de la mascota</span>
-      <span data-t="prog3">Síntomas</span>
-      <span data-t="prog4">Servicios</span>
+      <span data-t="prog1">Cliente</span><span data-t="prog2">Mascota</span>
+      <span data-t="prog3">Síntomas</span><span data-t="prog4">Servicios</span>
     </div>
     <div class="progress-bar">
-      <div class="progress-step active" id="ps1"></div>
-      <div class="progress-step" id="ps2"></div>
-      <div class="progress-step" id="ps3"></div>
-      <div class="progress-step" id="ps4"></div>
+      <div class="progress-step active" id="ps1"></div><div class="progress-step" id="ps2"></div>
+      <div class="progress-step" id="ps3"></div><div class="progress-step" id="ps4"></div>
     </div>
   </div>
 
-  <!-- SECCIÓN 1: CLIENTE -->
   <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">👤</div>
-      <span class="section-title" data-t="sec1-title">Datos del cliente</span>
-    </div>
+    <div class="section-header"><div class="section-icon">👤</div><span class="section-title" data-t="sec1-title">Datos del cliente</span></div>
     <div class="form-grid">
       <div class="field"><label data-t="f-fname">Nombre</label><input type="text" id="fname" placeholder="María" oninput="updateProgress()" /></div>
       <div class="field"><label data-t="f-lname">Apellido</label><input type="text" id="lname" placeholder="González" /></div>
       <div class="field"><label data-t="f-email">Correo electrónico</label><input type="email" id="email" placeholder="maria@ejemplo.com" /></div>
-      <div class="field"><label data-t="f-phone">Teléfono</label><input type="tel" id="phone" placeholder="+52 / +1 ..." /></div>
+      <div class="field"><label data-t="f-phone">Teléfono / WhatsApp</label><input type="tel" id="phone" placeholder="+52 55 1234 5678" /></div>
       <div class="field full"><label data-t="f-address">Dirección</label><input type="text" id="address" placeholder="Calle, número, colonia, ciudad" /></div>
     </div>
   </div>
 
-  <!-- SECCIÓN 2: MASCOTA -->
   <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">🐾</div>
-      <span class="section-title" data-t="sec2-title">Datos de la mascota</span>
-    </div>
+    <div class="section-header"><div class="section-icon">🐾</div><span class="section-title" data-t="sec2-title">Datos de la mascota</span></div>
     <div class="form-grid">
       <div class="field">
         <label data-t="f-species">Especie</label>
         <select id="species" onchange="updateProgress()">
-          <option value="" data-t="f-species-ph">Seleccionar...</option>
-          <option value="dog" data-t="sp-dog">Perro 🐕</option>
-          <option value="cat" data-t="sp-cat">Gato 🐈</option>
-          <option value="rabbit" data-t="sp-rabbit">Conejo 🐇</option>
-          <option value="bird" data-t="sp-bird">Ave 🐦</option>
-          <option value="hamster" data-t="sp-hamster">Hámster</option>
-          <option value="reptile" data-t="sp-reptile">Reptil 🦎</option>
-          <option value="other" data-t="sp-other">Otro</option>
+          <option value="" data-t="f-ph">Seleccionar...</option>
+          <option value="Perro">🐕 Perro / Dog</option>
+          <option value="Gato">🐈 Gato / Cat</option>
+          <option value="Conejo">🐇 Conejo / Rabbit</option>
+          <option value="Ave">🐦 Ave / Bird</option>
+          <option value="Hámster">Hámster</option>
+          <option value="Reptil">🦎 Reptil / Reptile</option>
+          <option value="Otro">Otro / Other</option>
         </select>
       </div>
       <div class="field"><label data-t="f-petname">Nombre de la mascota</label><input type="text" id="petname" placeholder="Firulais" /></div>
-      <div class="field"><label data-t="f-breed">Raza</label><input type="text" id="breed" placeholder="Labrador" /></div>
-      <div class="field"><label data-t="f-age">Edad</label><input type="text" id="petage" placeholder="3 años / 3 years" /></div>
+      <div class="field"><label data-t="f-breed">Raza / Breed</label><input type="text" id="breed" placeholder="Labrador" /></div>
+      <div class="field"><label data-t="f-age">Edad / Age</label><input type="text" id="petage" placeholder="3 años" /></div>
       <div class="field"><label data-t="f-color">Color / Marcas</label><input type="text" id="petcolor" placeholder="negro y blanco" /></div>
-      <div class="field"><label data-t="f-chip">Chip / Tatuaje</label><input type="text" id="chip" placeholder="opcional / optional" /></div>
+      <div class="field"><label data-t="f-chip">Chip / Tatuaje</label><input type="text" id="chip" placeholder="opcional" /></div>
       <div class="field">
-        <label data-t="f-neutered">¿Está castrado/a?</label>
+        <label data-t="f-neutered">¿Castrado/a?</label>
         <select id="neutered">
-          <option value="" data-t="f-species-ph">Seleccionar...</option>
-          <option value="yes" data-t="opt-yes">Sí / Yes</option>
-          <option value="no" data-t="opt-no">No</option>
-          <option value="unknown" data-t="opt-unknown">Desconocido / Unknown</option>
+          <option value="">Seleccionar...</option>
+          <option value="Sí">Sí / Yes</option>
+          <option value="No">No</option>
+          <option value="Desconocido">Desconocido / Unknown</option>
         </select>
       </div>
-    </div>
-  </div>
-
-  <!-- SECCIÓN 3: SÍNTOMAS -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">📋</div>
-      <span class="section-title" data-t="sec3-title">Motivo de la visita</span>
-    </div>
-    <div class="form-grid">
-      <div class="field full">
-        <label data-t="f-symptoms-tags">Síntomas frecuentes (selección múltiple)</label>
-        <div class="tag-grid" id="symptomTags"></div>
-      </div>
-      <div class="field full">
-        <label data-t="f-symptom-text">Descripción libre</label>
-        <textarea id="symptomText" placeholder="Describa brevemente el estado de su mascota y desde cuándo presenta estos síntomas..."></textarea>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECCIÓN 4: HISTORIAL / VACUNAS -->
-  <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">💉</div>
-      <span class="section-title" data-t="sec4-title">Historial médico y vacunas</span>
-    </div>
-    <div class="form-grid">
-      <div class="field full">
-        <label data-t="f-vaccines">Últimas vacunas (selección múltiple)</label>
-        <div class="tag-grid" id="vaccineTags"></div>
-      </div>
       <div class="field">
-        <label data-t="f-conditions">Enfermedades previas / Alergias</label>
-        <textarea id="conditions" placeholder="Diabetes, insuficiencia renal, alergia a..."></textarea>
-      </div>
-      <div class="field">
-        <label data-t="f-meds">Medicamentos actuales</label>
-        <input type="text" id="meds" placeholder="Nombre, dosis, frecuencia" />
+        <label data-t="f-nextvaccine">Próxima vacuna (fecha)</label>
+        <input type="date" id="nextvaccine" />
       </div>
     </div>
   </div>
 
-  <!-- SECCIÓN 5: SERVICIOS -->
   <div class="section-card">
-    <div class="section-header">
-      <div class="section-icon">🧾</div>
-      <span class="section-title" data-t="sec5-title">Selección de servicios</span>
+    <div class="section-header"><div class="section-icon">📋</div><span class="section-title" data-t="sec3-title">Motivo de la visita</span></div>
+    <div class="form-grid">
+      <div class="field full"><label data-t="f-symptoms-tags">Síntomas</label><div class="tag-grid" id="symptomTags"></div></div>
+      <div class="field full"><label data-t="f-symptom-text">Descripción</label><textarea id="symptomText" placeholder="Describa brevemente..."></textarea></div>
     </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header"><div class="section-icon">💉</div><span class="section-title" data-t="sec4-title">Historial médico</span></div>
+    <div class="form-grid">
+      <div class="field full"><label data-t="f-vaccines">Últimas vacunas</label><div class="tag-grid" id="vaccineTags"></div></div>
+      <div class="field"><label data-t="f-conditions">Enfermedades / Alergias</label><textarea id="conditions" placeholder="Diabetes, alergia a..."></textarea></div>
+      <div class="field"><label data-t="f-meds">Medicamentos actuales</label><input type="text" id="meds" placeholder="Nombre, dosis, frecuencia" /></div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header"><div class="section-icon">🧾</div><span class="section-title" data-t="sec5-title">Selección de servicios</span></div>
     <div class="services-grid" id="servicesGrid"></div>
   </div>
 
-  <!-- FACTURA PREVIEW -->
   <div class="invoice-preview">
     <div class="invoice-top">
       <span class="invoice-title" data-t="inv-title">Vista previa de factura</span>
       <span class="invoice-date" id="invDate"></span>
     </div>
     <div id="invoiceItems"><div class="invoice-empty" data-t="inv-empty">Ningún servicio seleccionado</div></div>
-    <div class="invoice-total-row">
-      <span data-t="inv-net">Total (neto)</span>
-      <span id="totalNet">$ 0.00</span>
-    </div>
-    <div class="invoice-vat" id="vatLine" data-t="inv-vat-placeholder">IVA 16%: $0.00 | Total bruto: $0.00</div>
+    <div class="invoice-total-row"><span data-t="inv-net">Total (neto)</span><span id="totalNet">$ 0.00</span></div>
+    <div class="invoice-vat" id="vatLine"></div>
   </div>
 
-  <button class="btn-submit" onclick="submitForm()" data-t="btn-submit">Enviar registro y crear factura →</button>
+  <div class="btn-row">
+    <button class="btn btn-primary btn-full" onclick="submitForm()" data-t="btn-submit">Guardar registro →</button>
+    <button class="btn btn-pdf" onclick="generatePDF()" data-t="btn-pdf" style="white-space:nowrap;">⬇ PDF Factura</button>
+  </div>
 
   <div class="success-msg" id="successMsg">
-    <div class="success-main" data-t="success-main">✓ ¡Registro guardado exitosamente!</div>
-    <div class="success-sub" data-t="success-sub">La veterinaria ha sido notificada. Recibirá una confirmación por correo electrónico.</div>
+    <div class="success-main" data-t="success-main">✓ ¡Registro guardado!</div>
+    <div class="success-sub" data-t="success-sub">La veterinaria ha sido notificada. Revise su correo electrónico.</div>
   </div>
-
 </div>
 
+<!-- ═══════════════════════════════════════════════
+     PAGE 2 – CITAS (Appointment Booking)
+════════════════════════════════════════════════ -->
+<div class="page" id="page-citas">
+  <div class="section-card">
+    <div class="section-header"><div class="section-icon">📅</div><span class="section-title" data-t="citas-title">Reservar una cita</span></div>
+
+    <div class="calendar-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+      <span class="cal-month" id="calMonthLabel"></span>
+      <button class="cal-nav" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="calendar-grid" id="calGrid"></div>
+
+    <div id="timeSlotsWrap" style="display:none;">
+      <div class="section-header" style="margin-top:1rem;"><div class="section-icon">🕐</div><span class="section-title" data-t="citas-slots">Horarios disponibles</span></div>
+      <div class="time-slots" id="timeSlots"></div>
+    </div>
+
+    <div id="apptFormWrap" style="display:none;">
+      <div class="section-header" style="margin-top:1rem;"><div class="section-icon">📝</div><span class="section-title" data-t="citas-form">Sus datos</span></div>
+      <div class="form-grid">
+        <div class="field"><label data-t="f-fname">Nombre</label><input type="text" id="appt-name" placeholder="María González" /></div>
+        <div class="field"><label data-t="f-phone">Teléfono / WhatsApp</label><input type="tel" id="appt-phone" placeholder="+52 55..." /></div>
+        <div class="field"><label data-t="f-petname">Mascota</label><input type="text" id="appt-pet" placeholder="Firulais (Perro)" /></div>
+        <div class="field">
+          <label data-t="citas-reason">Motivo</label>
+          <select id="appt-reason">
+            <option value="">Seleccionar...</option>
+            <option>Consulta general</option><option>Vacunación</option>
+            <option>Cirugía</option><option>Urgencia</option><option>Control</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="appt-confirm" id="apptConfirmBox" style="display:none;margin-top:1rem;">
+        <div class="appt-confirm-row"><span class="appt-confirm-label" data-t="appt-date">Fecha</span><span class="appt-confirm-value" id="apptConfDate"></span></div>
+        <div class="appt-confirm-row"><span class="appt-confirm-label" data-t="appt-time">Hora</span><span class="appt-confirm-value" id="apptConfTime"></span></div>
+        <div class="appt-confirm-row"><span class="appt-confirm-label" data-t="appt-patient">Paciente</span><span class="appt-confirm-value" id="apptConfPet"></span></div>
+        <div class="appt-confirm-row"><span class="appt-confirm-label" data-t="appt-reason2">Motivo</span><span class="appt-confirm-value" id="apptConfReason"></span></div>
+      </div>
+
+      <div class="btn-row" style="margin-top:1rem;">
+        <button class="btn btn-primary btn-full" onclick="bookAppointment()" data-t="citas-btn">Confirmar cita →</button>
+      </div>
+    </div>
+
+    <div class="success-msg" id="apptSuccess" style="margin-top:1rem;">
+      <div class="success-main" data-t="appt-success-main">✓ ¡Cita confirmada!</div>
+      <div class="success-sub" id="apptSuccessSub"></div>
+    </div>
+  </div>
+
+  <div class="section-card" id="upcomingAppts">
+    <div class="section-header"><div class="section-icon">📋</div><span class="section-title" data-t="citas-upcoming">Próximas citas</span></div>
+    <div id="apptList"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 3 – PACIENTES (Patient Search)
+════════════════════════════════════════════════ -->
+<div class="page" id="page-pacientes">
+  <div class="section-card">
+    <div class="section-header"><div class="section-icon">🔍</div><span class="section-title" data-t="pac-title">Buscar paciente</span></div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Nombre del paciente o dueño..." oninput="filterPatients()" data-t-placeholder="pac-search" />
+      <button class="btn btn-secondary" onclick="filterPatients()" data-t="pac-btn">Buscar</button>
+    </div>
+    <div class="patient-list" id="patientList"></div>
+    <div class="empty-state" id="patientEmpty" style="display:none;">
+      <div class="empty-icon">🐾</div>
+      <span data-t="pac-empty">No se encontraron pacientes.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 4 – RECORDATORIOS (Vaccine Reminders)
+════════════════════════════════════════════════ -->
+<div class="page" id="page-recordatorios">
+  <div class="section-card">
+    <div class="section-header"><div class="section-icon">🔔</div><span class="section-title" data-t="rec-title">Recordatorios de vacunas</span></div>
+    <div class="warn-banner">⚠️ <span data-t="rec-info">Los recordatorios se envían automáticamente por correo cuando la vacuna está próxima. Conecte Supabase para activar envíos reales.</span></div>
+    <div class="reminder-list" id="reminderList"></div>
+    <div class="empty-state" id="reminderEmpty" style="display:none;">
+      <div class="empty-icon">💉</div>
+      <span data-t="rec-empty">No hay recordatorios pendientes.</span>
+    </div>
+  </div>
+
+  <div class="section-card" style="margin-top:1rem;">
+    <div class="section-header"><div class="section-icon">📧</div><span class="section-title" data-t="rec-manual-title">Enviar recordatorio manual</span></div>
+    <div class="form-grid">
+      <div class="field"><label data-t="f-email">Correo del cliente</label><input type="email" id="rem-email" placeholder="cliente@ejemplo.com" /></div>
+      <div class="field"><label data-t="rec-petname">Nombre mascota</label><input type="text" id="rem-pet" placeholder="Firulais" /></div>
+      <div class="field full"><label data-t="rec-vaccine">Vacuna pendiente</label><input type="text" id="rem-vaccine" placeholder="Rabia, Moquillo..." /></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="sendReminder()" data-t="rec-send">Enviar recordatorio →</button>
+    </div>
+    <div class="success-msg" id="reminderSuccess" style="margin-top:1rem;">
+      <div class="success-main" data-t="rec-sent">✓ Recordatorio enviado (simulado)</div>
+      <div class="success-sub" data-t="rec-sent-sub">Con Supabase + EmailJS activado, este correo se enviará automáticamente.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── jsPDF library ─── -->
 <script>
-// ─── TRANSLATIONS ───────────────────────────────────────────────
+// ══════════════════════════════════════════════════
+//  TRANSLATIONS
+// ══════════════════════════════════════════════════
 const T = {
   es: {
-    'lang-label': 'Idioma / Language:',
-    'hero-title': 'Clínica Veterinaria',
-    'hero-sub': 'Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.',
-    'prog1': 'Datos del cliente', 'prog2': 'Datos de la mascota', 'prog3': 'Síntomas', 'prog4': 'Servicios',
-    'sec1-title': 'Datos del cliente', 'sec2-title': 'Datos de la mascota',
-    'sec3-title': 'Motivo de la visita', 'sec4-title': 'Historial médico y vacunas', 'sec5-title': 'Selección de servicios',
-    'f-fname': 'Nombre', 'f-lname': 'Apellido', 'f-email': 'Correo electrónico', 'f-phone': 'Teléfono', 'f-address': 'Dirección',
-    'f-species': 'Especie', 'f-species-ph': 'Seleccionar...', 'f-petname': 'Nombre de la mascota',
-    'f-breed': 'Raza', 'f-age': 'Edad', 'f-color': 'Color / Marcas', 'f-chip': 'Chip / Tatuaje',
-    'f-neutered': '¿Está castrado/a?', 'opt-yes': 'Sí', 'opt-no': 'No', 'opt-unknown': 'Desconocido',
-    'sp-dog': 'Perro 🐕', 'sp-cat': 'Gato 🐈', 'sp-rabbit': 'Conejo 🐇', 'sp-bird': 'Ave 🐦',
-    'sp-hamster': 'Hámster', 'sp-reptile': 'Reptil 🦎', 'sp-other': 'Otro',
-    'f-symptoms-tags': 'Síntomas frecuentes (selección múltiple)',
-    'f-symptom-text': 'Descripción libre',
-    'f-vaccines': 'Últimas vacunas (selección múltiple)',
-    'f-conditions': 'Enfermedades previas / Alergias',
-    'f-meds': 'Medicamentos actuales',
-    'inv-title': 'Vista previa de factura', 'inv-empty': 'Ningún servicio seleccionado',
-    'inv-net': 'Total (neto)', 'inv-vat-placeholder': 'IVA 16%: $0.00 | Total bruto: $0.00',
-    'btn-submit': 'Enviar registro y crear factura →',
-    'success-main': '✓ ¡Registro guardado exitosamente!',
-    'success-sub': 'La veterinaria ha sido notificada. Recibirá una confirmación por correo electrónico.',
-    symptoms: ['Vómito','Diarrea','Sin apetito','Letargia','Tos','Estornudos','Picazón / Rascado','Cojera','Revisión rutinaria','Vacunación','Herida / Lesión'],
-    vaccines: ['Rabia','Moquillo','Parvovirus','Leptospirosis','Leucemia felina','Calicivirus','Ninguna'],
-    services: [
-      { id:'s1', name:'Consulta general', price: 350 },
-      { id:'s2', name:'Vacuna (simple)', price: 280 },
-      { id:'s3', name:'Análisis de sangre', price: 550 },
-      { id:'s4', name:'Radiografía', price: 700 },
-      { id:'s5', name:'Cura de herida', price: 450 },
-      { id:'s6', name:'Castración (gato)', price: 1200 },
-      { id:'s7', name:'Castración (perro)', price: 1800 },
-      { id:'s8', name:'Limpieza dental', price: 900 },
-      { id:'s9', name:'Ultrasonido', price: 650 },
-      { id:'s10', name:'Implante de chip', price: 400 },
-      { id:'s11', name:'Análisis de heces', price: 220 },
-      { id:'s12', name:'Examen de piel', price: 300 },
+    'tab1':'📋 Registro','tab2':'📅 Citas','tab3':'🐾 Pacientes','tab4':'🔔 Recordatorios',
+    'hero-title':'Annamalitos – Clínica Veterinaria',
+    'hero-sub':'Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.',
+    'prog1':'Cliente','prog2':'Mascota','prog3':'Síntomas','prog4':'Servicios',
+    'sec1-title':'Datos del cliente','sec2-title':'Datos de la mascota',
+    'sec3-title':'Motivo de la visita','sec4-title':'Historial médico','sec5-title':'Selección de servicios',
+    'f-fname':'Nombre','f-lname':'Apellido','f-email':'Correo electrónico','f-phone':'Teléfono / WhatsApp',
+    'f-address':'Dirección','f-species':'Especie','f-ph':'Seleccionar...','f-petname':'Nombre de la mascota',
+    'f-breed':'Raza','f-age':'Edad','f-color':'Color / Marcas','f-chip':'Chip / Tatuaje',
+    'f-neutered':'¿Castrado/a?','f-nextvaccine':'Próxima vacuna (fecha)',
+    'f-symptoms-tags':'Síntomas (selección múltiple)','f-symptom-text':'Descripción libre',
+    'f-vaccines':'Últimas vacunas','f-conditions':'Enfermedades / Alergias','f-meds':'Medicamentos actuales',
+    'inv-title':'Vista previa de factura','inv-empty':'Ningún servicio seleccionado',
+    'inv-net':'Total (neto)','btn-submit':'Guardar registro →','btn-pdf':'⬇ PDF Factura',
+    'success-main':'✓ ¡Registro guardado!','success-sub':'La veterinaria ha sido notificada.',
+    'citas-title':'Reservar una cita','citas-slots':'Horarios disponibles','citas-form':'Sus datos',
+    'citas-reason':'Motivo','citas-btn':'Confirmar cita →','citas-upcoming':'Próximas citas',
+    'appt-date':'Fecha','appt-time':'Hora','appt-patient':'Paciente','appt-reason2':'Motivo',
+    'appt-success-main':'✓ ¡Cita confirmada!',
+    'pac-title':'Buscar paciente','pac-search':'Nombre del paciente o dueño...','pac-btn':'Buscar','pac-empty':'No se encontraron pacientes.',
+    'rec-title':'Recordatorios de vacunas',
+    'rec-info':'Los recordatorios se envían automáticamente por correo cuando la vacuna está próxima.',
+    'rec-empty':'No hay recordatorios pendientes.','rec-manual-title':'Enviar recordatorio manual',
+    'rec-petname':'Nombre mascota','rec-vaccine':'Vacuna pendiente','rec-send':'Enviar recordatorio →',
+    'rec-sent':'✓ Recordatorio enviado (simulado)','rec-sent-sub':'Con Supabase + EmailJS activado, este correo se enviará automáticamente.',
+    symptoms:['Vómito','Diarrea','Sin apetito','Letargia','Tos','Estornudos','Picazón','Cojera','Revisión rutinaria','Vacunación','Herida'],
+    vaccines:['Rabia','Moquillo','Parvovirus','Leptospirosis','Leucemia felina','Calicivirus','Ninguna'],
+    services:[
+      {id:'s1',name:'Consulta general',price:350},{id:'s2',name:'Vacuna (simple)',price:280},
+      {id:'s3',name:'Análisis de sangre',price:550},{id:'s4',name:'Radiografía',price:700},
+      {id:'s5',name:'Cura de herida',price:450},{id:'s6',name:'Castración (gato)',price:1200},
+      {id:'s7',name:'Castración (perro)',price:1800},{id:'s8',name:'Limpieza dental',price:900},
+      {id:'s9',name:'Ultrasonido',price:650},{id:'s10',name:'Implante de chip',price:400},
+      {id:'s11',name:'Análisis de heces',price:220},{id:'s12',name:'Examen de piel',price:300},
     ],
-    currency: 'MXN $',
-    vat_label: 'IVA 16%',
-    vat_rate: 0.16,
+    currency:'MXN $', vat_label:'IVA 16%', vat_rate:0.16,
+    months:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    days:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
   },
   en: {
-    'lang-label': 'Language:',
-    'hero-title': 'Veterinary Clinic',
-    'hero-sub': 'Please fill out the form so we can take the best possible care of your pet.',
-    'prog1': 'Client details', 'prog2': 'Pet details', 'prog3': 'Symptoms', 'prog4': 'Services',
-    'sec1-title': 'Client details', 'sec2-title': 'Pet details',
-    'sec3-title': 'Reason for visit', 'sec4-title': 'Medical history & vaccines', 'sec5-title': 'Service selection',
-    'f-fname': 'First name', 'f-lname': 'Last name', 'f-email': 'Email address', 'f-phone': 'Phone', 'f-address': 'Address',
-    'f-species': 'Species', 'f-species-ph': 'Select...', 'f-petname': 'Pet name',
-    'f-breed': 'Breed', 'f-age': 'Age', 'f-color': 'Color / Markings', 'f-chip': 'Chip / Tattoo',
-    'f-neutered': 'Is the pet neutered?', 'opt-yes': 'Yes', 'opt-no': 'No', 'opt-unknown': 'Unknown',
-    'sp-dog': 'Dog 🐕', 'sp-cat': 'Cat 🐈', 'sp-rabbit': 'Rabbit 🐇', 'sp-bird': 'Bird 🐦',
-    'sp-hamster': 'Hamster', 'sp-reptile': 'Reptile 🦎', 'sp-other': 'Other',
-    'f-symptoms-tags': 'Common symptoms (multiple selection)',
-    'f-symptom-text': 'Free description',
-    'f-vaccines': 'Recent vaccines (multiple selection)',
-    'f-conditions': 'Pre-existing conditions / Allergies',
-    'f-meds': 'Current medications',
-    'inv-title': 'Invoice preview', 'inv-empty': 'No service selected yet',
-    'inv-net': 'Total (net)', 'inv-vat-placeholder': 'VAT 10%: $0.00 | Gross total: $0.00',
-    'btn-submit': 'Submit registration & create invoice →',
-    'success-main': '✓ Registration saved successfully!',
-    'success-sub': 'The veterinarian has been notified. You will receive a confirmation by email.',
-    symptoms: ['Vomiting','Diarrhea','Loss of appetite','Lethargy','Coughing','Sneezing','Itching / Scratching','Limping','Routine check-up','Vaccination','Wound / Injury'],
-    vaccines: ['Rabies','Distemper','Parvovirus','Leptospirosis','Feline leukemia','Calicivirus','None'],
-    services: [
-      { id:'s1', name:'General consultation', price: 35 },
-      { id:'s2', name:'Vaccine (single)', price: 28 },
-      { id:'s3', name:'Blood analysis', price: 55 },
-      { id:'s4', name:'X-ray', price: 70 },
-      { id:'s5', name:'Wound treatment', price: 45 },
-      { id:'s6', name:'Neutering (cat)', price: 120 },
-      { id:'s7', name:'Neutering (dog)', price: 180 },
-      { id:'s8', name:'Dental cleaning', price: 90 },
-      { id:'s9', name:'Ultrasound', price: 65 },
-      { id:'s10', name:'Chip implant', price: 40 },
-      { id:'s11', name:'Fecal analysis', price: 22 },
-      { id:'s12', name:'Skin examination', price: 30 },
+    'tab1':'📋 Register','tab2':'📅 Appointments','tab3':'🐾 Patients','tab4':'🔔 Reminders',
+    'hero-title':'Annamalitos – Veterinary Clinic',
+    'hero-sub':'Please fill out the form so we can take the best possible care of your pet.',
+    'prog1':'Client','prog2':'Pet','prog3':'Symptoms','prog4':'Services',
+    'sec1-title':'Client details','sec2-title':'Pet details',
+    'sec3-title':'Reason for visit','sec4-title':'Medical history','sec5-title':'Service selection',
+    'f-fname':'First name','f-lname':'Last name','f-email':'Email address','f-phone':'Phone / WhatsApp',
+    'f-address':'Address','f-species':'Species','f-ph':'Select...','f-petname':'Pet name',
+    'f-breed':'Breed','f-age':'Age','f-color':'Color / Markings','f-chip':'Chip / Tattoo',
+    'f-neutered':'Neutered?','f-nextvaccine':'Next vaccine (date)',
+    'f-symptoms-tags':'Symptoms (multiple)','f-symptom-text':'Free description',
+    'f-vaccines':'Recent vaccines','f-conditions':'Conditions / Allergies','f-meds':'Current medications',
+    'inv-title':'Invoice preview','inv-empty':'No service selected yet',
+    'inv-net':'Total (net)','btn-submit':'Save registration →','btn-pdf':'⬇ PDF Invoice',
+    'success-main':'✓ Registration saved!','success-sub':'The veterinarian has been notified.',
+    'citas-title':'Book an appointment','citas-slots':'Available times','citas-form':'Your details',
+    'citas-reason':'Reason','citas-btn':'Confirm appointment →','citas-upcoming':'Upcoming appointments',
+    'appt-date':'Date','appt-time':'Time','appt-patient':'Patient','appt-reason2':'Reason',
+    'appt-success-main':'✓ Appointment confirmed!',
+    'pac-title':'Search patient','pac-search':'Pet name or owner name...','pac-btn':'Search','pac-empty':'No patients found.',
+    'rec-title':'Vaccine reminders',
+    'rec-info':'Reminders are sent automatically by email when a vaccine is due soon.',
+    'rec-empty':'No pending reminders.','rec-manual-title':'Send manual reminder',
+    'rec-petname':'Pet name','rec-vaccine':'Pending vaccine','rec-send':'Send reminder →',
+    'rec-sent':'✓ Reminder sent (simulated)','rec-sent-sub':'With Supabase + EmailJS active, this email will be sent automatically.',
+    symptoms:['Vomiting','Diarrhea','Loss of appetite','Lethargy','Coughing','Sneezing','Itching','Limping','Routine check-up','Vaccination','Wound'],
+    vaccines:['Rabies','Distemper','Parvovirus','Leptospirosis','Feline leukemia','Calicivirus','None'],
+    services:[
+      {id:'s1',name:'General consultation',price:35},{id:'s2',name:'Vaccine (single)',price:28},
+      {id:'s3',name:'Blood analysis',price:55},{id:'s4',name:'X-ray',price:70},
+      {id:'s5',name:'Wound treatment',price:45},{id:'s6',name:'Neutering (cat)',price:120},
+      {id:'s7',name:'Neutering (dog)',price:180},{id:'s8',name:'Dental cleaning',price:90},
+      {id:'s9',name:'Ultrasound',price:65},{id:'s10',name:'Chip implant',price:40},
+      {id:'s11',name:'Fecal analysis',price:22},{id:'s12',name:'Skin examination',price:30},
     ],
-    currency: '$',
-    vat_label: 'VAT 10%',
-    vat_rate: 0.10,
+    currency:'$', vat_label:'VAT 10%', vat_rate:0.10,
+    months:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    days:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
   }
 };
 
 let lang = 'es';
 const selected = new Set();
 
+// Demo patient data
+let patients = [
+  {id:'p1', petname:'Luna', species:'🐈 Gato', breed:'Siamés', age:'2 años', owner:'Ana García', phone:'+52 55 1234', email:'ana@ejemplo.com', conditions:'Ninguna', meds:'—', nextvaccine:'2026-06-10', vaccines:['Rabia','Calicivirus'], services:['Consulta general']},
+  {id:'p2', petname:'Max', species:'🐕 Perro', breed:'Labrador', age:'5 años', owner:'Carlos López', phone:'+52 55 5678', email:'carlos@ejemplo.com', conditions:'Diabetes', meds:'Insulina 2u/día', nextvaccine:'2026-05-15', vaccines:['Rabia','Parvovirus'], services:['Análisis de sangre']},
+  {id:'p3', petname:'Coco', species:'🐦 Ave', breed:'Loro', age:'8 años', owner:'María Ruiz', phone:'+52 55 9012', email:'maria@ejemplo.com', conditions:'Ninguna', meds:'—', nextvaccine:'2026-09-01', vaccines:['Ninguna'], services:['Revisión']},
+];
+
+// Demo appointments
+let appointments = [
+  {date:'2026-05-08', time:'10:00', name:'Julia Méndez', pet:'Toto (Perro)', reason:'Vacunación'},
+  {date:'2026-05-09', time:'11:30', name:'Roberto Sosa', pet:'Mimi (Gato)', reason:'Consulta general'},
+];
+
+// Booked slots per day (demo)
+const bookedSlots = {'2026-05-08':['10:00','11:00'],'2026-05-09':['11:30']};
+
+// Calendar state
+let calYear, calMonth, selectedDate = null, selectedTime = null;
+
+// ─── NAVIGATION ─────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  if (id === 'citas') renderCalendar();
+  if (id === 'pacientes') renderPatients();
+  if (id === 'recordatorios') renderReminders();
+}
+
+// ─── LANGUAGE ───────────────────────────────────
 function setLang(l) {
   lang = l;
-  document.getElementById('btn-es').classList.toggle('active', l === 'es');
-  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-es').classList.toggle('active', l==='es');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
   document.querySelectorAll('[data-t]').forEach(el => {
-    const key = el.getAttribute('data-t');
-    if (T[l][key]) el.textContent = T[l][key];
+    const k = el.getAttribute('data-t');
+    if (T[l][k]) el.textContent = T[l][k];
   });
-  buildSymptomTags();
-  buildVaccineTags();
-  buildServices();
-  updateInvoice();
-  setDate();
+  buildSymptomTags(); buildVaccineTags(); buildServices(); updateInvoice(); setDate();
+  renderCalendar(); renderPatients(); renderReminders();
 }
 
+// ─── FORM BUILDERS ──────────────────────────────
 function buildSymptomTags() {
-  const c = document.getElementById('symptomTags');
-  c.innerHTML = '';
-  T[lang].symptoms.forEach(s => {
-    const sp = document.createElement('span');
-    sp.className = 'tag';
-    sp.textContent = s;
-    sp.onclick = () => sp.classList.toggle('selected');
-    c.appendChild(sp);
-  });
+  const c = document.getElementById('symptomTags'); c.innerHTML = '';
+  T[lang].symptoms.forEach(s => { const sp = document.createElement('span'); sp.className='tag'; sp.textContent=s; sp.onclick=()=>sp.classList.toggle('selected'); c.appendChild(sp); });
 }
-
 function buildVaccineTags() {
-  const c = document.getElementById('vaccineTags');
-  c.innerHTML = '';
-  T[lang].vaccines.forEach(v => {
-    const sp = document.createElement('span');
-    sp.className = 'tag';
-    sp.textContent = v;
-    sp.onclick = () => sp.classList.toggle('selected');
-    c.appendChild(sp);
-  });
+  const c = document.getElementById('vaccineTags'); c.innerHTML = '';
+  T[lang].vaccines.forEach(v => { const sp = document.createElement('span'); sp.className='tag'; sp.textContent=v; sp.onclick=()=>sp.classList.toggle('selected'); c.appendChild(sp); });
 }
-
 function buildServices() {
   const grid = document.getElementById('servicesGrid');
-  const prevSelected = new Set([...selected].map(s => s.id));
-  selected.clear();
-  grid.innerHTML = '';
+  const prev = new Set([...selected].map(s=>s.id)); selected.clear(); grid.innerHTML='';
   T[lang].services.forEach(s => {
     const div = document.createElement('div');
-    div.className = 'service-item' + (prevSelected.has(s.id) ? ' selected' : '');
-    div.id = 'svc_' + s.id;
-    const checked = prevSelected.has(s.id) ? 'checked' : '';
-    div.innerHTML = `<input type="checkbox" id="chk_${s.id}" ${checked} /><div><div class="service-name">${s.name}</div><div class="service-price">${T[lang].currency} ${s.price.toFixed(2)}</div></div>`;
+    div.className = 'service-item' + (prev.has(s.id)?' selected':'');
+    div.id = 'svc_'+s.id;
+    div.innerHTML = `<input type="checkbox" id="chk_${s.id}" ${prev.has(s.id)?'checked':''} /><div><div class="service-name">${s.name}</div><div class="service-price">${T[lang].currency} ${s.price.toFixed(2)}</div></div>`;
     div.querySelector('input').addEventListener('change', function() {
       div.classList.toggle('selected', this.checked);
-      if (this.checked) selected.add(s); else selected.forEach(x => { if (x.id === s.id) selected.delete(x); });
-      updateInvoice();
-      updateProgress();
+      if (this.checked) selected.add(s); else selected.forEach(x=>{ if(x.id===s.id) selected.delete(x); });
+      updateInvoice(); updateProgress();
     });
-    div.onclick = (e) => { if (e.target.tagName !== 'INPUT') div.querySelector('input').click(); };
-    if (prevSelected.has(s.id)) selected.add(s);
+    div.onclick = e => { if(e.target.tagName!=='INPUT') div.querySelector('input').click(); };
+    if (prev.has(s.id)) selected.add(s);
     grid.appendChild(div);
   });
 }
 
 function updateInvoice() {
   const t = T[lang];
-  const items = document.getElementById('invoiceItems');
-  const totalEl = document.getElementById('totalNet');
-  const vatEl = document.getElementById('vatLine');
+  const items = document.getElementById('invoiceItems'), totalEl = document.getElementById('totalNet'), vatEl = document.getElementById('vatLine');
   const arr = [...selected];
-  if (arr.length === 0) {
-    items.innerHTML = `<div class="invoice-empty">${t['inv-empty']}</div>`;
-    totalEl.textContent = t.currency + ' 0.00';
-    vatEl.textContent = t['inv-vat-placeholder'];
-    return;
-  }
+  if (!arr.length) { items.innerHTML=`<div class="invoice-empty">${t['inv-empty']}</div>`; totalEl.textContent=t.currency+' 0.00'; vatEl.textContent=''; return; }
   let total = 0;
-  items.innerHTML = arr.map(s => { total += s.price; return `<div class="invoice-row"><span>${s.name}</span><span>${t.currency} ${s.price.toFixed(2)}</span></div>`; }).join('');
-  const vat = total * t.vat_rate;
-  const gross = total + vat;
+  items.innerHTML = arr.map(s => { total+=s.price; return `<div class="invoice-row"><span>${s.name}</span><span>${t.currency} ${s.price.toFixed(2)}</span></div>`; }).join('');
+  const vat = total*t.vat_rate, gross = total+vat;
   totalEl.textContent = `${t.currency} ${total.toFixed(2)}`;
-  vatEl.textContent = `${t.vat_label}: ${t.currency} ${vat.toFixed(2)} | ${lang === 'es' ? 'Total bruto' : 'Gross total'}: ${t.currency} ${gross.toFixed(2)}`;
+  vatEl.textContent = `${t.vat_label}: ${t.currency} ${vat.toFixed(2)} | ${lang==='es'?'Bruto':'Gross'}: ${t.currency} ${gross.toFixed(2)}`;
 }
 
 function updateProgress() {
-  let step = 1;
-  if (document.getElementById('fname').value && document.getElementById('lname').value) step = 2;
-  if (step >= 2 && document.getElementById('species').value) step = 3;
-  if (step >= 3 && selected.size > 0) step = 4;
-  for (let i = 1; i <= 4; i++) document.getElementById('ps' + i).classList.toggle('active', i <= step);
+  let s = 1;
+  if (document.getElementById('fname').value && document.getElementById('lname').value) s=2;
+  if (s>=2 && document.getElementById('species').value) s=3;
+  if (s>=3 && selected.size>0) s=4;
+  for (let i=1;i<=4;i++) document.getElementById('ps'+i).classList.toggle('active', i<=s);
 }
 
 function setDate() {
-  const now = new Date();
-  document.getElementById('invDate').textContent = now.toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { day: '2-digit', month: 'long', year: 'numeric' });
+  document.getElementById('invDate').textContent = new Date().toLocaleDateString(lang==='es'?'es-MX':'en-US',{day:'2-digit',month:'long',year:'numeric'});
 }
 
+// ─── SUBMIT ─────────────────────────────────────
 function submitForm() {
-  const t = T[lang];
-  const data = {
-    lang,
-    client: { fname: document.getElementById('fname').value, lname: document.getElementById('lname').value, email: document.getElementById('email').value, phone: document.getElementById('phone').value, address: document.getElementById('address').value },
-    pet: { species: document.getElementById('species').value, name: document.getElementById('petname').value, breed: document.getElementById('breed').value, age: document.getElementById('petage').value, color: document.getElementById('petcolor').value, chip: document.getElementById('chip').value, neutered: document.getElementById('neutered').value },
-    symptoms: [...document.querySelectorAll('#symptomTags .tag.selected')].map(x => x.textContent),
-    symptom_text: document.getElementById('symptomText').value,
-    vaccines: [...document.querySelectorAll('#vaccineTags .tag.selected')].map(x => x.textContent),
-    conditions: document.getElementById('conditions').value,
-    meds: document.getElementById('meds').value,
-    services: [...selected].map(s => ({ id: s.id, name: s.name, price: s.price })),
-    total_net: [...selected].reduce((a, s) => a + s.price, 0),
-    currency: t.currency,
-    date: new Date().toISOString(),
-  };
-  // ← HIER: Supabase-Insert einfügen
-  console.log('📋 Supabase payload:', JSON.stringify(data, null, 2));
-  document.getElementById('successMsg').style.display = 'block';
-  document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth' });
+  const fname = document.getElementById('fname').value;
+  const lname = document.getElementById('lname').value;
+  const petname = document.getElementById('petname').value;
+  if (!fname || !lname || !petname) { alert(lang==='es'?'Por favor complete los campos obligatorios (Nombre, Apellido, Mascota).':'Please fill in required fields (First name, Last name, Pet name).'); return; }
+  const nextvac = document.getElementById('nextvaccine').value;
+  if (petname) {
+    patients.unshift({
+      id:'p'+Date.now(), petname, species: document.getElementById('species').value,
+      breed: document.getElementById('breed').value, age: document.getElementById('petage').value,
+      owner: fname+' '+lname, phone: document.getElementById('phone').value,
+      email: document.getElementById('email').value, conditions: document.getElementById('conditions').value||'—',
+      meds: document.getElementById('meds').value||'—', nextvaccine: nextvac,
+      vaccines: [...document.querySelectorAll('#vaccineTags .tag.selected')].map(x=>x.textContent),
+      services: [...selected].map(s=>s.name),
+    });
+  }
+  document.getElementById('successMsg').style.display='block';
+  document.getElementById('successMsg').scrollIntoView({behavior:'smooth'});
 }
 
-// INIT
-buildSymptomTags();
-buildVaccineTags();
-buildServices();
-setDate();
+// ─── PDF INVOICE ────────────────────────────────
+function generatePDF() {
+  if (typeof window.jspdf === 'undefined') { alert('PDF library loading, please try again in a moment.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const t = T[lang];
+  const arr = [...selected];
+  const fname = document.getElementById('fname').value || '—';
+  const lname = document.getElementById('lname').value || '—';
+  const petname = document.getElementById('petname').value || '—';
+  const now = new Date();
+
+  doc.setFillColor(45, 106, 79);
+  doc.rect(0, 0, 210, 32, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('Annamalitos – Clínica Veterinaria', 14, 14);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text(now.toLocaleDateString(lang==='es'?'es-MX':'en-US',{day:'2-digit',month:'long',year:'numeric'}), 14, 24);
+
+  doc.setTextColor(30, 30, 30);
+  doc.setFontSize(12); doc.setFont('helvetica','bold');
+  doc.text(lang==='es'?'FACTURA / RECIBO':'INVOICE / RECEIPT', 14, 48);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text((lang==='es'?'Cliente: ':'Client: ')+fname+' '+lname, 14, 58);
+  doc.text((lang==='es'?'Mascota: ':'Pet: ')+petname, 14, 66);
+
+  doc.setFillColor(240, 237, 230);
+  doc.rect(14, 76, 182, 8, 'F');
+  doc.setFont('helvetica','bold');
+  doc.text(lang==='es'?'Servicio':'Service', 16, 82);
+  doc.text(lang==='es'?'Precio':'Price', 170, 82);
+
+  doc.setFont('helvetica','normal');
+  let y = 94, total = 0;
+  if (!arr.length) { doc.text(lang==='es'?'Ningún servicio seleccionado':'No service selected', 16, y); y+=10; }
+  arr.forEach(s => {
+    doc.text(s.name, 16, y);
+    doc.text(`${t.currency} ${s.price.toFixed(2)}`, 170, y, {align:'right'});
+    total += s.price; y += 9;
+  });
+
+  doc.setDrawColor(200,200,200); doc.line(14, y, 196, y); y+=8;
+  const vat = total*t.vat_rate, gross = total+vat;
+  doc.text(lang==='es'?'Total neto:':'Net total:', 130, y); doc.text(`${t.currency} ${total.toFixed(2)}`, 196, y, {align:'right'}); y+=8;
+  doc.text(`${t.vat_label}:`, 130, y); doc.text(`${t.currency} ${vat.toFixed(2)}`, 196, y, {align:'right'}); y+=8;
+  doc.setFont('helvetica','bold');
+  doc.text(lang==='es'?'TOTAL BRUTO:':'GROSS TOTAL:', 130, y); doc.text(`${t.currency} ${gross.toFixed(2)}`, 196, y, {align:'right'}); y+=16;
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120,120,120);
+  doc.text(lang==='es'?'Gracias por confiar en Annamalitos. ¡Hasta pronto! 🐾':'Thank you for trusting Annamalitos. See you soon! 🐾', 14, y);
+
+  doc.save(`Annamalitos_Factura_${fname}_${petname}_${now.toISOString().slice(0,10)}.pdf`);
+}
+
+// ─── CALENDAR ────────────────────────────────────
+function initCal() { const n=new Date(); calYear=n.getFullYear(); calMonth=n.getMonth(); }
+function changeMonth(d) { calMonth+=d; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+
+const TIMES = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','16:00','16:30','17:00','17:30'];
+
+function renderCalendar() {
+  const t = T[lang];
+  document.getElementById('calMonthLabel').textContent = t.months[calMonth]+' '+calYear;
+  const grid = document.getElementById('calGrid'); grid.innerHTML='';
+  t.days.forEach(d => { const el=document.createElement('div'); el.className='cal-day-name'; el.textContent=d; grid.appendChild(el); });
+  const first = new Date(calYear,calMonth,1).getDay();
+  const days = new Date(calYear,calMonth+1,0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=0;i<first;i++) { const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el); }
+  for (let d=1;d<=days;d++) {
+    const el=document.createElement('div');
+    const dt = new Date(calYear,calMonth,d); dt.setHours(0,0,0,0);
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dt.getTime()===today.getTime();
+    const isPast = dt<today;
+    el.className = 'cal-day'+(isPast?' past':'')+(isToday?' today':'')+(selectedDate===ds?' selected':'');
+    if (bookedSlots[ds] && bookedSlots[ds].length<TIMES.length && !isPast) el.classList.add('has-slot');
+    el.textContent = d;
+    if (!isPast) el.onclick = () => selectDate(ds);
+    grid.appendChild(el);
+  }
+}
+
+function selectDate(ds) {
+  selectedDate=ds; selectedTime=null;
+  document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.cal-day').forEach(el => { if(el.textContent==String(parseInt(ds.split('-')[2]))) el.classList.add('selected'); });
+  renderTimeSlots(ds);
+  document.getElementById('apptFormWrap').style.display='none';
+  document.getElementById('apptConfirmBox').style.display='none';
+}
+
+function renderTimeSlots(ds) {
+  const wrap = document.getElementById('timeSlotsWrap');
+  const container = document.getElementById('timeSlots');
+  container.innerHTML=''; wrap.style.display='block';
+  const booked = bookedSlots[ds]||[];
+  TIMES.forEach(t => {
+    const el=document.createElement('div');
+    const isBooked=booked.includes(t);
+    el.className='time-slot'+(isBooked?' booked':'');
+    el.textContent=t;
+    if(!isBooked) el.onclick=()=>selectTime(t,el);
+    container.appendChild(el);
+  });
+}
+
+function selectTime(t, el) {
+  document.querySelectorAll('.time-slot').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTime=t;
+  document.getElementById('apptFormWrap').style.display='block';
+  updateApptConfirm();
+}
+
+function updateApptConfirm() {
+  if(!selectedDate||!selectedTime) return;
+  const box=document.getElementById('apptConfirmBox');
+  const t=T[lang];
+  document.getElementById('apptConfDate').textContent=new Date(selectedDate+'T12:00').toLocaleDateString(lang==='es'?'es-MX':'en-US',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('apptConfTime').textContent=selectedTime;
+  document.getElementById('apptConfPet').textContent=document.getElementById('appt-pet').value||'—';
+  document.getElementById('apptConfReason').textContent=document.getElementById('appt-reason').value||'—';
+  box.style.display='block';
+}
+
+document.addEventListener('change', e => { if(['appt-pet','appt-reason'].includes(e.target.id)) updateApptConfirm(); });
+
+function bookAppointment() {
+  if(!selectedDate||!selectedTime) { alert(lang==='es'?'Seleccione fecha y hora.':'Please select date and time.'); return; }
+  const name=document.getElementById('appt-name').value||'—';
+  const pet=document.getElementById('appt-pet').value||'—';
+  const reason=document.getElementById('appt-reason').value||'—';
+  appointments.push({date:selectedDate, time:selectedTime, name, pet, reason});
+  if(!bookedSlots[selectedDate]) bookedSlots[selectedDate]=[];
+  bookedSlots[selectedDate].push(selectedTime);
+  const sub=document.getElementById('apptSuccessSub');
+  sub.textContent=`${selectedDate} ${lang==='es'?'a las':'at'} ${selectedTime} – ${pet}`;
+  document.getElementById('apptSuccess').style.display='block';
+  renderApptList();
+  renderCalendar();
+  selectedDate=null; selectedTime=null;
+  document.getElementById('timeSlotsWrap').style.display='none';
+  document.getElementById('apptFormWrap').style.display='none';
+}
+
+function renderApptList() {
+  const list=document.getElementById('apptList');
+  const upcoming = appointments.filter(a=>a.date>=new Date().toISOString().slice(0,10)).sort((a,b)=>a.date+a.time>b.date+b.time?1:-1);
+  if(!upcoming.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><span>${lang==='es'?'No hay citas próximas.':'No upcoming appointments.'}</span></div>`;return;}
+  list.innerHTML=upcoming.map(a=>`
+    <div class="reminder-item">
+      <div class="reminder-dot dot-green"></div>
+      <div><div class="reminder-pet">${a.pet}</div><div class="reminder-info">${a.name} · ${lang==='es'?'Motivo':'Reason'}: ${a.reason}</div></div>
+      <div class="reminder-due due-green" style="margin-left:auto;text-align:right;">${a.date}<br>${a.time}</div>
+    </div>`).join('');
+}
+
+// ─── PATIENTS ────────────────────────────────────
+function renderPatients(query='') {
+  const list=document.getElementById('patientList'), empty=document.getElementById('patientEmpty');
+  const q=query.toLowerCase();
+  const filtered=patients.filter(p=> !q || p.petname.toLowerCase().includes(q)||p.owner.toLowerCase().includes(q)||p.species.toLowerCase().includes(q));
+  if(!filtered.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=filtered.map(p=>`
+    <div>
+      <div class="patient-card" onclick="toggleDetail('${p.id}')">
+        <div class="patient-avatar">${p.species.split(' ')[0]}</div>
+        <div class="patient-info">
+          <div class="patient-name">${p.petname}</div>
+          <div class="patient-meta">${p.species} · ${p.breed||'—'} · ${p.age||'—'} · ${lang==='es'?'Dueño':'Owner'}: ${p.owner}</div>
+        </div>
+        <span class="patient-badge">${p.services&&p.services.length?p.services[p.services.length-1]:(lang==='es'?'Sin servicios':'No services')}</span>
+      </div>
+      <div class="patient-detail" id="detail-${p.id}">
+        <div class="detail-grid">
+          <div class="detail-row"><div class="detail-label">${lang==='es'?'Teléfono':'Phone'}</div><div class="detail-value">${p.phone||'—'}</div></div>
+          <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${p.email||'—'}</div></div>
+          <div class="detail-row"><div class="detail-label">${lang==='es'?'Enfermedades':'Conditions'}</div><div class="detail-value">${p.conditions||'—'}</div></div>
+          <div class="detail-row"><div class="detail-label">${lang==='es'?'Medicamentos':'Medications'}</div><div class="detail-value">${p.meds||'—'}</div></div>
+          <div class="detail-row"><div class="detail-label">${lang==='es'?'Próxima vacuna':'Next vaccine'}</div><div class="detail-value">${p.nextvaccine||'—'}</div></div>
+          <div class="detail-row"><div class="detail-label">${lang==='es'?'Vacunas':'Vaccines'}</div><div class="detail-value">${(p.vaccines||[]).join(', ')||'—'}</div></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);">${lang==='es'?'Servicios realizados':'Services done'}: ${(p.services||[]).join(', ')||'—'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleDetail(id) {
+  const el=document.getElementById('detail-'+id);
+  el.classList.toggle('open');
+}
+
+function filterPatients() {
+  renderPatients(document.getElementById('searchInput').value);
+}
+
+// ─── REMINDERS ───────────────────────────────────
+function renderReminders() {
+  const list=document.getElementById('reminderList'), empty=document.getElementById('reminderEmpty');
+  const today=new Date(); today.setHours(0,0,0,0);
+  const withDue=patients.filter(p=>p.nextvaccine).map(p=>{
+    const due=new Date(p.nextvaccine); due.setHours(0,0,0,0);
+    const diff=Math.round((due-today)/(1000*60*60*24));
+    return {...p,diff};
+  }).sort((a,b)=>a.diff-b.diff);
+  if(!withDue.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=withDue.map(p=>{
+    let dotClass='dot-green', dueClass='due-green', dueLabel='';
+    if(p.diff<0){dotClass='dot-red';dueClass='due-red';dueLabel=lang==='es'?`Vencida (${Math.abs(p.diff)}d)`:`Overdue (${Math.abs(p.diff)}d)`;}
+    else if(p.diff<=14){dotClass='dot-amber';dueClass='due-amber';dueLabel=lang==='es'?`En ${p.diff}d`:`In ${p.diff}d`;}
+    else{dueLabel=lang==='es'?`En ${p.diff}d`:`In ${p.diff}d`;}
+    return `<div class="reminder-item">
+      <div class="reminder-dot ${dotClass}"></div>
+      <div><div class="reminder-pet">${p.petname}</div><div class="reminder-info">${p.owner} · ${p.email}</div></div>
+      <div class="reminder-due ${dueClass}" style="text-align:right;">${p.nextvaccine}<br><strong>${dueLabel}</strong></div>
+    </div>`;
+  }).join('');
+}
+
+function sendReminder() {
+  document.getElementById('reminderSuccess').style.display='block';
+}
+
+// ─── INIT ────────────────────────────────────────
+buildSymptomTags(); buildVaccineTags(); buildServices(); updateInvoice(); setDate();
+initCal(); renderCalendar(); renderApptList(); renderPatients(); renderReminders();
 </script>
 </body>
 </html>
