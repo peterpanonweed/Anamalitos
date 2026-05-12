@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Annamalitos – Clínica Veterinaria</title>
+<title>Anamalitos – Clínica Veterinaria</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -213,7 +213,7 @@ body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; fo
 <div class="page active" id="page-registro">
   <div class="hero">
     <div class="hero-text">
-      <h1 data-t="hero-title">Annamalitos</h1>
+      <h1 data-t="hero-title">Anamalitos</h1>
       <p data-t="hero-sub">Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.</p>
     </div>
     <div class="hero-animals">
@@ -440,7 +440,7 @@ body { background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; fo
 const T = {
   es: {
     'tab1':'📋 Registro','tab2':'📅 Citas','tab3':'🐾 Pacientes','tab4':'🔔 Recordatorios',
-    'hero-title':'Annamalitos – Clínica Veterinaria',
+    'hero-title':'Anamalitos – Clínica Veterinaria',
     'hero-sub':'Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.',
     'prog1':'Cliente','prog2':'Mascota','prog3':'Síntomas','prog4':'Servicios',
     'sec1-title':'Datos del cliente','sec2-title':'Datos de la mascota',
@@ -480,7 +480,7 @@ const T = {
   },
   en: {
     'tab1':'📋 Register','tab2':'📅 Appointments','tab3':'🐾 Patients','tab4':'🔔 Reminders',
-    'hero-title':'Annamalitos – Veterinary Clinic',
+    'hero-title':'Anamalitos – Veterinary Clinic',
     'hero-sub':'Please fill out the form so we can take the best possible care of your pet.',
     'prog1':'Client','prog2':'Pet','prog3':'Symptoms','prog4':'Services',
     'sec1-title':'Client details','sec2-title':'Pet details',
@@ -637,7 +637,7 @@ function submitForm() {
     });
   }
   // ─── GOOGLE SHEETS ───────────────────────────
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzBwd07vvRT76s2o6WF1RScobrdavBVZyFEga_cPYyKS_QG-H0co4KceNHnvAL1at9/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJk61vpNYPx-ULvV3FeSj19VpAOpMEWpBKuOaXJstO3DVPWkQufw6kvXCvYgsiClBQ/exec';
   const data = {
     lang: lang,
     client: {
@@ -698,7 +698,7 @@ function generatePDF() {
   doc.rect(0, 0, 210, 32, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20); doc.setFont('helvetica','bold');
-  doc.text('Annamalitos – Clínica Veterinaria', 14, 14);
+  doc.text('Anamalitos – Clínica Veterinaria', 14, 14);
   doc.setFontSize(10); doc.setFont('helvetica','normal');
   doc.text(now.toLocaleDateString(lang==='es'?'es-MX':'en-US',{day:'2-digit',month:'long',year:'numeric'}), 14, 24);
 
@@ -732,9 +732,9 @@ function generatePDF() {
   doc.text(lang==='es'?'TOTAL BRUTO:':'GROSS TOTAL:', 130, y); doc.text(`${t.currency} ${gross.toFixed(2)}`, 196, y, {align:'right'}); y+=16;
 
   doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120,120,120);
-  doc.text(lang==='es'?'Gracias por confiar en Annamalitos. ¡Hasta pronto! 🐾':'Thank you for trusting Annamalitos. See you soon! 🐾', 14, y);
+  doc.text(lang==='es'?'Gracias por confiar en Anamalitos. ¡Hasta pronto! 🐾':'Thank you for trusting Anamalitos. See you soon! 🐾', 14, y);
 
-  doc.save(`Annamalitos_Factura_${fname}_${petname}_${now.toISOString().slice(0,10)}.pdf`);
+  doc.save(`Anamalitos_Factura_${fname}_${petname}_${now.toISOString().slice(0,10)}.pdf`);
 }
 
 // ─── CALENDAR ────────────────────────────────────
