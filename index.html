@@ -636,6 +636,48 @@ function submitForm() {
       services: [...selected].map(s=>s.name),
     });
   }
+  // ─── GOOGLE SHEETS ───────────────────────────
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2b9dtVu0y4bMDtvK7NmIx9HSCIMU-VWb-wVXkiL1yy0m20ReHNxaHRzoNmpGfeBhz/exec';
+  const data = {
+    lang: lang,
+    client: {
+      fname:   document.getElementById('fname').value,
+      lname:   document.getElementById('lname').value,
+      email:   document.getElementById('email').value,
+      phone:   document.getElementById('phone').value,
+      address: document.getElementById('address') ? document.getElementById('address').value : ''
+    },
+    pet: {
+      species:  document.getElementById('species').value,
+      name:     document.getElementById('petname').value,
+      breed:    document.getElementById('breed').value,
+      age:      document.getElementById('petage').value,
+      color:    document.getElementById('color') ? document.getElementById('color').value : '',
+      chip:     document.getElementById('chip') ? document.getElementById('chip').value : '',
+      neutered: document.getElementById('neutered') ? document.getElementById('neutered').checked : false
+    },
+    symptoms:     [...document.querySelectorAll('#symptomTags .tag.selected')].map(x=>x.textContent),
+    symptom_text: document.getElementById('symptomText') ? document.getElementById('symptomText').value : '',
+    vaccines:     [...document.querySelectorAll('#vaccineTags .tag.selected')].map(x=>x.textContent),
+    conditions:   document.getElementById('conditions').value || '',
+    meds:         document.getElementById('meds').value || '',
+    services:     [...selected].map(s=>({id: s.id||'', name: s.name, price: s.price||0})),
+    total_net:    [...selected].reduce((sum,s)=>sum+(s.price||0),0),
+    currency:     'MXN $',
+    date:         new Date().toISOString()
+  };
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    console.log('✅ Datos enviados a Google Sheets');
+  }).catch(err => {
+    console.error('❌ Error al enviar a Google Sheets:', err);
+  });
+  // ─────────────────────────────────────────────
+
   document.getElementById('successMsg').style.display='block';
   document.getElementById('successMsg').scrollIntoView({behavior:'smooth'});
 }
