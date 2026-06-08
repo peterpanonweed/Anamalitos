@@ -253,6 +253,53 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
 .btn-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); padding: 5px 14px; border-radius: var(--r-sm); cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
 .btn-logout:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
+/* ─── SYNC INDICATOR ───────────── */
+.sync-indicator { font-size: 11px; padding: 4px 10px; border-radius: 99px; display: inline-flex; align-items: center; gap: 4px; }
+.sync-indicator.ok { background: rgba(80,200,120,0.15); color: #b6f4c8; border: 1px solid rgba(80,200,120,0.25); }
+.sync-indicator.syncing { background: rgba(255,200,80,0.15); color: #ffe8a3; border: 1px solid rgba(255,200,80,0.25); }
+.sync-indicator.error { background: rgba(255,100,100,0.15); color: #ffb0b0; border: 1px solid rgba(255,100,100,0.25); }
+
+/* ─── NUEVO BADGE (pulsing) ───────────── */
+.nuevo-badge {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 8px;
+  animation: pulse 1.5s ease-in-out infinite;
+  vertical-align: middle;
+  box-shadow: 0 0 0 0 rgba(226,75,74,0.7);
+}
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(226,75,74,0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(226,75,74,0); }
+  100% { box-shadow: 0 0 0 0 rgba(226,75,74,0); }
+}
+.nuevo-row {
+  background: linear-gradient(90deg, rgba(226,75,74,0.08) 0%, transparent 100%) !important;
+  border-left: 3px solid var(--red) !important;
+}
+.nuevo-card {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 0 3px rgba(226,75,74,0.1);
+  position: relative;
+}
+.nuevo-tab-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  margin-left: 6px;
+  animation: pulse 1.5s ease-in-out infinite;
+  vertical-align: middle;
+}
+
 .admin-page { display: none; max-width: 1100px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
 .admin-page.active { display: block; }
 
@@ -324,9 +371,10 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
 /* ══════════════════════════════
    ADMIN – PATIENT SEARCH
 ══════════════════════════════ */
-.admin-search { display: flex; gap: 10px; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
-.admin-search input { flex: 1; padding: 9px 14px; border: 1px solid var(--border2); border-radius: var(--r-sm); font-size: 14px; font-family: inherit; background: var(--sand); color: var(--text); }
+.admin-search { display: flex; gap: 8px; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
+.admin-search input { flex: 1; min-width: 200px; padding: 9px 14px; border: 1px solid var(--border2); border-radius: var(--r-sm); font-size: 14px; font-family: inherit; background: var(--sand); color: var(--text); }
 .admin-search input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,106,79,0.12); }
+.filter-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
 .patient-detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
 .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text3); margin-bottom: 2px; }
 .detail-value { font-size: 13px; font-weight: 500; color: var(--text); }
@@ -622,6 +670,7 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
       </div>
     </div>
     <div class="admin-topbar-right">
+      <span class="sync-indicator ok" id="syncIndicator">⏳ Iniciando...</span>
       <span class="admin-badge" id="adminDateBadge"></span>
       <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
     </div>
@@ -640,12 +689,12 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
         <div><div class="stat-value" id="stat-requests">—</div><div class="stat-label">Solicitudes pendientes</div></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon amber">⚠️</div>
-        <div><div class="stat-value" id="stat-soon">—</div><div class="stat-label">Vacunas próximas (≤14d)</div></div>
+        <div class="stat-icon amber">💰</div>
+        <div><div class="stat-value" id="stat-pendiente">—</div><div class="stat-label">Pagos pendientes (MXN)</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon red">🚨</div>
-        <div><div class="stat-value" id="stat-overdue">—</div><div class="stat-label">Vacunas vencidas</div></div>
+        <div><div class="stat-value" id="stat-overdue">—</div><div class="stat-label">Visitas con pago abierto</div></div>
       </div>
     </div>
 
@@ -660,13 +709,13 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
         <div class="admin-card-body" id="dash-requests-preview"></div>
       </div>
 
-      <!-- Vaccine alerts preview -->
+      <!-- Outstanding payments preview -->
       <div class="admin-card">
         <div class="admin-card-header">
-          <span class="admin-card-title">🔔 Alertas de vacunas</span>
-          <button class="btn-sm btn-sm-green" onclick="showAdminPage('reminders')">Ver todas</button>
+          <span class="admin-card-title">💰 Pagos pendientes</span>
+          <button class="btn-sm btn-sm-green" onclick="showAdminPage('patients')">Ver todos</button>
         </div>
-        <div class="admin-card-body" id="dash-reminders-preview"></div>
+        <div class="admin-card-body" id="dash-payments-preview"></div>
       </div>
 
     </div>
@@ -708,7 +757,10 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
         <span class="pill pill-green" id="patients-count-label">0 pacientes</span>
       </div>
       <div class="admin-search">
-        <input type="text" id="adminSearch" placeholder="Buscar por nombre, mascota o especie..." oninput="renderAdminPatients()" />
+        <input type="text" id="adminSearch" placeholder="Buscar por nombre, mascota, especie o teléfono..." oninput="renderAdminPatients()" />
+        <button class="btn-sm btn-sm-gray filter-btn active" id="filter-all" onclick="setPatientFilter('all')">Todos</button>
+        <button class="btn-sm btn-sm-gray filter-btn" id="filter-pendiente" onclick="setPatientFilter('pendiente')">⏳ Con pagos pendientes</button>
+        <button class="btn-sm btn-sm-gray filter-btn" id="filter-pagado" onclick="setPatientFilter('pagado')">✓ Pagado</button>
       </div>
       <div class="admin-card-body" id="admin-patients-list"></div>
     </div>
@@ -743,16 +795,1284 @@ let selectedDays = new Set();
 let selectedUrgencyVal = null;
 
 let patients = [
-  {id:'p1', petname:'Luna', species:'🐈 Gato', breed:'Siamés', age:'2 años', owner:'Ana García', phone:'+52 55 1234', email:'ana@ejemplo.com', conditions:'Ninguna', meds:'—', nextvaccine:'2026-06-15', vaccines:['Rabia','Calicivirus'], services:['Consulta general']},
-  {id:'p2', petname:'Max', species:'🐕 Perro', breed:'Labrador', age:'5 años', owner:'Carlos López', phone:'+52 55 5678', email:'carlos@ejemplo.com', conditions:'Diabetes', meds:'Insulina 2u/día', nextvaccine:'2026-06-12', vaccines:['Rabia','Parvovirus'], services:['Análisis de sangre']},
-  {id:'p3', petname:'Coco', species:'🐦 Ave', breed:'Loro', age:'8 años', owner:'María Ruiz', phone:'+52 55 9012', email:'maria@ejemplo.com', conditions:'Ninguna', meds:'—', nextvaccine:'2026-09-01', vaccines:['Ninguna'], services:['Revisión']},
-  {id:'p4', petname:'Nala', species:'🐈 Gato', breed:'Persa', age:'1 año', owner:'Roberto Sosa', phone:'+52 55 3456', email:'roberto@ejemplo.com', conditions:'Ninguna', meds:'—', nextvaccine:'2026-05-30', vaccines:['Triple felina'], services:['Vacuna triple felina']},
+  {
+    "id": "p39",
+    "petname": "Camila",
+    "species": "🐕 Perro",
+    "breed": "",
+    "age": "",
+    "owner": "Susana Zychlinski",
+    "phone": "5510102420",
+    "email": "chili.su@hotmail.com",
+    "address": "Bosque de #nebros 49",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Moquillo",
+      "Parvovirus"
+    ],
+    "services": [
+      "Esterilización 10–20 kg",
+      "Esterilización 20–40 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-06-07",
+        "symptoms": "",
+        "description": "",
+        "services": "Esterilización 10–20 kg",
+        "total": "928",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-06-08",
+        "symptoms": "",
+        "description": "",
+        "services": "Esterilización 20–40 kg",
+        "total": "1044",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-06-08",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p40",
+    "petname": "Mila",
+    "species": "🐕 Perro",
+    "breed": "Labrador",
+    "age": "3 años",
+    "owner": "Mari Carmen Jacques",
+    "phone": "5554068182",
+    "email": "mayjacques@yahoo.com",
+    "address": "Parque de Cádiz 106 B",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Esterilización 20–40 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-06-08",
+        "symptoms": "",
+        "description": "Esterilización \nLe hacen falta las últimas vacunas que se vencieron en mayo.",
+        "services": "Esterilización 20–40 kg",
+        "total": "1044",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-06-08",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p37",
+    "petname": "Güero",
+    "species": "🐈 Gato",
+    "breed": "",
+    "age": "5 años",
+    "owner": "Fernanda Sepúlveda",
+    "phone": "5563440509",
+    "email": "fpsepulvedaxd@gmail.com",
+    "address": "Monte video",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Consulta general",
+      "Esterilización 40–60 kg",
+      "Vacuna triple felina"
+    ],
+    "visits": [
+      {
+        "date": "2026-06-07",
+        "symptoms": "Vómito",
+        "description": "",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-06-07",
+        "symptoms": "Vómito",
+        "description": "",
+        "services": "Consulta general, Esterilización 40–60 kg",
+        "total": "1508",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-06-07",
+        "symptoms": "Vómito",
+        "description": "",
+        "services": "Consulta general, Esterilización 40–60 kg",
+        "total": "1508",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-06-07",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Vacuna triple felina",
+        "total": "348",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-06-07",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p38",
+    "petname": "Dogo",
+    "species": "🐕 Perro",
+    "breed": "Mix",
+    "age": "2 años",
+    "owner": "Valentina Gonzalez",
+    "phone": "5563440509",
+    "email": "",
+    "address": "Pedregal",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-06-07",
+        "symptoms": "Vómito",
+        "description": "",
+        "services": "",
+        "total": "0",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-06-07",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p36",
+    "petname": "Mirko",
+    "species": "🐕 Perro",
+    "breed": "Criollo",
+    "age": "4 años",
+    "owner": "Jenny Tapia",
+    "phone": "525540804957",
+    "email": "mexico.jennyka@gmail.com",
+    "address": "calle 12 de diciembre numero 11 colonia navidad Cuajimalpa",
+    "conditions": "Ninguna",
+    "meds": "—",
+    "vaccines": [
+      "Rabia"
+    ],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-06-05",
+        "symptoms": "",
+        "description": "Tiene irritados los ojos y le da comezón",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-06-05",
+        "symptoms": "",
+        "description": "Tiene irritados los ojos y le da comezón",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-06-05",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p16",
+    "petname": "Shashi",
+    "species": "🐕 Perro",
+    "breed": "Pomerania/maltes",
+    "age": "7",
+    "owner": "Adelle Samman",
+    "phone": "5530281687",
+    "email": "adellesamman13@gmail@com",
+    "address": "Avenida Club de Golf Lomas #207, Av. Club De Golf #207",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Moquillo",
+      "Parvovirus",
+      "Leptospirosis",
+      "Leucemia felina",
+      "Calicivirus"
+    ],
+    "services": [
+      "Profilaxis (todos los pesos)"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "",
+        "description": "Limpieza dental",
+        "services": "Profilaxis (todos los pesos)",
+        "total": "928",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-06-04",
+        "symptoms": "",
+        "description": "Mal aliento",
+        "services": "Profilaxis (todos los pesos)",
+        "total": "928",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-06-04",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p35",
+    "petname": "KaanPeekTurbo",
+    "species": "🐹 Roedor",
+    "breed": "",
+    "age": "1",
+    "owner": "Adam Nümm",
+    "phone": "49304477758",
+    "email": "zeitenwechsel1234@gmail.com",
+    "address": "Maybachufer, 28",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-06-02",
+        "symptoms": "Vómito",
+        "description": "Hola Ana espero que este cosa funciona bien y que tu seis bien.",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-06-02",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p34",
+    "petname": "Molly",
+    "species": "🐕 Perro",
+    "breed": "Chihuahua",
+    "age": "9",
+    "owner": "Anier Peña",
+    "phone": "2281540573",
+    "email": "anier.fajardo@gmail.com",
+    "address": "Av Palo Solo 6",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Profilaxis (todos los pesos)",
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-30",
+        "symptoms": "Revisión rutinaria",
+        "description": "Revisión de dientes y probable limpieza",
+        "services": "Profilaxis (todos los pesos), Consulta general",
+        "total": "1044",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-30",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p33",
+    "petname": "Luna",
+    "species": "🐈 Gato",
+    "breed": "Bicolor",
+    "age": "7 meses",
+    "owner": "Mónica Lucía Aguilar Rogel",
+    "phone": "525534069602",
+    "email": "moni78lar@gmail.com",
+    "address": "Cerrada Veracruz, No. 109, int. 101",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Esterilización 1–10 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-29",
+        "symptoms": "",
+        "description": "",
+        "services": "Esterilización 1–10 kg",
+        "total": "696",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-29",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p31",
+    "petname": "Yaris y bony",
+    "species": "🐕 Perro",
+    "breed": "Husky",
+    "age": "6 y 4",
+    "owner": "María Isabel Francisco Santiago",
+    "phone": "5545113223",
+    "email": "isabel.2404frank@gmail.com",
+    "address": "Monte Albán m 12 lt 4 col el pedregal",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-28",
+        "symptoms": "",
+        "description": "Baño",
+        "services": "",
+        "total": "0",
+        "status": "Pagado"
+      },
+      {
+        "date": "2026-05-28",
+        "symptoms": "",
+        "description": "Baño",
+        "services": "",
+        "total": "0",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-28",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p32",
+    "petname": "Kimi",
+    "species": "🐕 Perro",
+    "breed": "Maltés con pomerania",
+    "age": "4",
+    "owner": "Jennifer Anaya",
+    "phone": "5516503786",
+    "email": "jnnfranaya@gmail.com",
+    "address": "",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Parvovirus"
+    ],
+    "services": [
+      "Profilaxis (todos los pesos)"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-28",
+        "symptoms": "",
+        "description": "Limpieza dental",
+        "services": "Profilaxis (todos los pesos)",
+        "total": "928",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-28",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p29",
+    "petname": "Zucky",
+    "species": "🐕 Perro",
+    "breed": "Pomeranian",
+    "age": "2 años",
+    "owner": "Manola Del olmo",
+    "phone": "5591991530",
+    "email": "manoladelolmo@gmail.com",
+    "address": "Prolongación bosques de reforma 1383",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-27",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-05-27",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      },
+      {
+        "date": "2026-05-27",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-27",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p30",
+    "petname": "Luna",
+    "species": "🐕 Perro",
+    "breed": "Única",
+    "age": "7 años",
+    "owner": "Cecilia Ballesté",
+    "phone": "#ERROR!",
+    "email": "cballeste@hotmail.com",
+    "address": "Hacienda del Ciervo 2",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-27",
+        "symptoms": "",
+        "description": "Bolita o inflamación no purulenta después de esterilización en el lugar de los puntos.No tiene fiebre, estå bien de ånimo, come y toma agua  bien. Su orina y deposiciones son normales.",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-27",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p27",
+    "petname": "Gorda",
+    "species": "🐕 Perro",
+    "breed": "",
+    "age": "",
+    "owner": "Nancy Miranda",
+    "phone": "5514957603",
+    "email": "montse.1495c@gmail.com",
+    "address": "Calle 10 de junio lote 1 manzana 38 colonia plan de Ayala",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Esterilización 10–20 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-26",
+        "symptoms": "",
+        "description": "Esterilización",
+        "services": "Esterilización 10–20 kg",
+        "total": "928",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-26",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p28",
+    "petname": "Leelah",
+    "species": "🐕 Perro",
+    "breed": "Lahasa",
+    "age": "17",
+    "owner": "Carmen Reynes",
+    "phone": "5554389480",
+    "email": "carmen_kaim@yahoo.com",
+    "address": "Villa Versalles #28",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Moquillo",
+      "Parvovirus"
+    ],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-26",
+        "symptoms": "Vómito, Revisión rutinaria",
+        "description": "Come bien \nLe\nCuesta trabajo orinar y da vueltas en círculos",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-26",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p26",
+    "petname": "Morphy",
+    "species": "🐕 Perro",
+    "breed": "Shih Tzu",
+    "age": "2 meses",
+    "owner": "Frida Linares",
+    "phone": "5564380743",
+    "email": "jimenalsan@gmail.com",
+    "address": "AV. Primero de Mayo Manzana 051, Cumbria, 54700 Cuautitlán Izcalli, Mex.  I",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Vacuna puppy"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-25",
+        "symptoms": "Vacunación",
+        "description": "Primera Vacuna",
+        "services": "Vacuna puppy",
+        "total": "348",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-25",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p24",
+    "petname": "Berlioz",
+    "species": "🐈 Gato",
+    "breed": "Europeo",
+    "age": "1 año 9 meses",
+    "owner": "Alicia Montserrat Velazquez Vazquez",
+    "phone": "525575667980",
+    "email": "montseeevazquez@gmail.com",
+    "address": "Monte sinai mz 27lt 4",
+    "conditions": "Sano",
+    "meds": "Ninguno",
+    "vaccines": [],
+    "services": [
+      "Vacuna rabia",
+      "Esterilización 1–10 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-22",
+        "symptoms": "Vacunación",
+        "description": "Vacunacion y esterilización",
+        "services": "Vacuna rabia, Esterilización 1–10 kg",
+        "total": "835.2",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-22",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p25",
+    "petname": "Juancho",
+    "species": "🐕 Perro",
+    "breed": "Chihuahua",
+    "age": "4 años",
+    "owner": "Andel Serra",
+    "phone": "5515109864",
+    "email": "andelserra@gmail",
+    "address": "Av De La Cuesta, TerraViva Girasoles, #45",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia"
+    ],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-22",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "",
+        "total": "0",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-22",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p23",
+    "petname": "Bonie",
+    "species": "🐕 Perro",
+    "breed": "Yorky",
+    "age": "2 años",
+    "owner": "Nayeli Lopez",
+    "phone": "5564329547",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "inyeccion",
+    "vaccines": [],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-21",
+        "symptoms": "Diarrea, Sin apetito",
+        "description": "",
+        "services": "Consulta general",
+        "total": "300",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-21",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p21",
+    "petname": "perras ferales",
+    "species": "🐕 Perro",
+    "breed": "mestizas",
+    "age": "4 años",
+    "owner": "Jessica Escamilla",
+    "phone": "5551275719",
+    "email": "",
+    "address": "",
+    "conditions": "2 esterilizaciones",
+    "meds": "hospitalizacion",
+    "vaccines": [],
+    "services": [
+      "Esterilización 20–40 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-20",
+        "symptoms": "",
+        "description": "",
+        "services": "Esterilización 20–40 kg",
+        "total": "1800",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-20",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p22",
+    "petname": "6 cachorros",
+    "species": "🐕 Perro",
+    "breed": "pitbull",
+    "age": "2 meses",
+    "owner": "Ana Mary Alarcon",
+    "phone": "",
+    "email": "",
+    "address": "",
+    "conditions": "se aplico suero subcutaneo a dos bbs",
+    "meds": "se inyecto a los 6 bbs",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-20",
+        "symptoms": "Diarrea",
+        "description": "parvo, mas hospitalizacion",
+        "services": "",
+        "total": "0",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-20",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p14",
+    "petname": "Kongo",
+    "species": "🐕 Perro",
+    "breed": "Pastor Belga",
+    "age": "2 meses",
+    "owner": "Nora Avilez",
+    "phone": "5583693041",
+    "email": "",
+    "address": "palo solo",
+    "conditions": "parvovirus",
+    "meds": "Silexiz",
+    "vaccines": [],
+    "services": [
+      "hospitalizacion"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "Vómito, Diarrea",
+        "description": "tiene Parvovirus se aplico una prueba triple digestiva",
+        "services": "hospitalizacion",
+        "total": "2100",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-19",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p15",
+    "petname": "Yumi",
+    "species": "🐈 Gato",
+    "breed": "",
+    "age": "9 meses",
+    "owner": "Jimena Fuentes",
+    "phone": "5511970645",
+    "email": "jimefuensak@outlook.com",
+    "address": "Paseos del Bosque 1",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Leucemia felina"
+    ],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-19",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p17",
+    "petname": "Luna",
+    "species": "🐈 Gato",
+    "breed": "gato domestico",
+    "age": "2 meses",
+    "owner": "Paulina Martinez",
+    "phone": "5514928076",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "se aplico suero intrav.",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "Diarrea, Revisión rutinaria",
+        "description": "",
+        "services": "",
+        "total": "0",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-19",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p18",
+    "petname": "Pinto",
+    "species": "🐕 Perro",
+    "breed": "Mestizo",
+    "age": "",
+    "owner": "Maria Cristina Miranda",
+    "phone": "5546436422",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "hospitalizacion",
+    "vaccines": [],
+    "services": [
+      "Esterilización 20–40 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Esterilización 20–40 kg",
+        "total": "1000",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-19",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p19",
+    "petname": "Princessa",
+    "species": "🐈 Gato",
+    "breed": "gato domestico",
+    "age": ".",
+    "owner": "Ximena Trujillo",
+    "phone": "5540109449",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "Revisión rutinaria",
+        "description": "",
+        "services": "Consulta general",
+        "total": "116",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-19",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p20",
+    "petname": "sin nombre",
+    "species": "🐈 Gato",
+    "breed": "gato domestico",
+    "age": "2 años",
+    "owner": "Liliana Gutierrez",
+    "phone": "5617162875",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "hospitalizacion",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-19",
+        "symptoms": "",
+        "description": "se aplico sonda",
+        "services": "",
+        "total": "1390",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-19",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p2",
+    "petname": "Mateo",
+    "species": "🐕 Perro",
+    "breed": "Mix",
+    "age": "5 meses",
+    "owner": "norma lorena carpizo dominguez",
+    "phone": "5554313133",
+    "email": "norma_carpizo@hotmail.com",
+    "address": "Av. Vista Real 16 Casa 13",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Esterilización 10–20 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "",
+        "description": "Esterilizacion",
+        "services": "Esterilización 10–20 kg",
+        "total": "700",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p3",
+    "petname": "Hana",
+    "species": "🐈 Gato",
+    "breed": "Criollo",
+    "age": "4 meses",
+    "owner": "Elizabeth De La torre",
+    "phone": "5517025885",
+    "email": "dltrasaid90@gmail.com",
+    "address": "Monte calvario 292",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Consulta general",
+      "Esterilización 1–10 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "Revisión rutinaria",
+        "description": "Lleva días maullando",
+        "services": "Consulta general, Esterilización 1–10 kg",
+        "total": "700",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p4",
+    "petname": "Murphy",
+    "species": "🐕 Perro",
+    "breed": "shih Tzu",
+    "age": "1 mes",
+    "owner": "Frida Linares",
+    "phone": "5564380743",
+    "email": "jimenalsan@gmail.com",
+    "address": "Av. Rio hondo Col. Benito Juárez",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "",
+        "description": "Consulta para revisión general y saber si es momento de desparasitar y vacunar",
+        "services": "Consulta general",
+        "total": "150",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p5",
+    "petname": "Luna",
+    "species": "🐈 Gato",
+    "breed": "",
+    "age": "2 meses",
+    "owner": "Ana Luisa Segura",
+    "phone": "5534789706",
+    "email": "anaseguravargas05@gmail.com",
+    "address": "Monte Líbano, 16 El Pedregal Huixquilucan México",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Consulta general",
+      "Coproparasitoscópico seriado"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "Diarrea, Sin apetito, Cojera, Revisión rutinaria, Vacunación",
+        "description": "Al caminar alza la patita izquierda y después la descansa la otra la patita derecha y así sucesivamente no siempre pero si lo hace seguido y le duele su colita si se la tocó para limpiarla",
+        "services": "Consulta general, Coproparasitoscópico seriado",
+        "total": "250",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p6",
+    "petname": "Sol",
+    "species": "🐈 Gato",
+    "breed": "",
+    "age": "2 meses",
+    "owner": "Ana Luisa Segura era",
+    "phone": "55 3478 9706",
+    "email": "anaseguravargas05@gmail.com",
+    "address": "monte Líbano, 16 El Pedregal Huixquilucan México",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Ninguna"
+    ],
+    "services": [
+      "Consulta general",
+      "Coproparasitoscópico seriado"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "Diarrea, Picazón, Revisión rutinaria, Vacunación",
+        "description": "Juega mucho pero también le dió diarrea",
+        "services": "Consulta general, Coproparasitoscópico seriado",
+        "total": "250",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p7",
+    "petname": "Zuky",
+    "species": "🐕 Perro",
+    "breed": "mestizo",
+    "age": "10 años",
+    "owner": "Victor Gonzalez",
+    "phone": "",
+    "email": "",
+    "address": "",
+    "conditions": "ECR",
+    "meds": "ipakitine",
+    "vaccines": [],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "",
+        "description": "Consulta",
+        "services": "Consulta general",
+        "total": "420",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p8",
+    "petname": "Smooky",
+    "species": "🐈 Gato",
+    "breed": "gato domestico",
+    "age": "4 meses",
+    "owner": "Gisela Quiroz",
+    "phone": "5515033153",
+    "email": "",
+    "address": "Santa fe, cuajimalpa",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Esterilización 1–10 kg"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "",
+        "description": "",
+        "services": "Esterilización 1–10 kg",
+        "total": "700",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p9",
+    "petname": "Guy",
+    "species": "🐕 Perro",
+    "breed": "Schnauzer",
+    "age": "15 años",
+    "owner": "Adela Chami",
+    "phone": "5513754624",
+    "email": "",
+    "address": "Tecamachalco",
+    "conditions": "eutanasia y cremacion",
+    "meds": "pentobarbital",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "",
+        "description": "",
+        "services": "",
+        "total": "1500",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p10",
+    "petname": "Tango",
+    "species": "🐕 Perro",
+    "breed": "mestizo",
+    "age": "3 años",
+    "owner": "Patricia R",
+    "phone": "5532000510",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Moquillo"
+    ],
+    "services": [
+      "Vacuna séxtuple",
+      "Vacuna rabia"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "Vacunación",
+        "description": "baño y desparasitante",
+        "services": "Vacuna séxtuple, Vacuna rabia",
+        "total": "1000",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p11",
+    "petname": "Pecas",
+    "species": "🐕 Perro",
+    "breed": "mestizo",
+    "age": "4 años",
+    "owner": "Patricia R",
+    "phone": "5532000510",
+    "email": "",
+    "address": "",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [
+      "Rabia",
+      "Moquillo"
+    ],
+    "services": [
+      "Vacuna séxtuple",
+      "Vacuna rabia"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "Vacunación",
+        "description": "baño y desparasitante",
+        "services": "Vacuna séxtuple, Vacuna rabia",
+        "total": "1000",
+        "status": "Pagado"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pagado"
+  },
+  {
+    "id": "p12",
+    "petname": "7 cachorros",
+    "species": "🐕 Perro",
+    "breed": "mestizos",
+    "age": "2 meses",
+    "owner": "Ana Mary Alarcon",
+    "phone": "",
+    "email": "",
+    "address": "",
+    "conditions": "parvo, corona",
+    "meds": "pruebas triples digestivas",
+    "vaccines": [],
+    "services": [],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "",
+        "description": "",
+        "services": "",
+        "total": "1000",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p13",
+    "petname": "Gatutsi",
+    "species": "🐈 Gato",
+    "breed": "gato domestico",
+    "age": "1 año",
+    "owner": "Daniela Olvera",
+    "phone": "5573547073",
+    "email": "",
+    "address": "pedregal",
+    "conditions": "—",
+    "meds": "—",
+    "vaccines": [],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-18",
+        "symptoms": "Herida",
+        "description": "",
+        "services": "Consulta general",
+        "total": "150",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-18",
+    "last_status": "Pendiente"
+  },
+  {
+    "id": "p1",
+    "petname": "Milo",
+    "species": "🐕 Perro",
+    "breed": "mestizo",
+    "age": "4 años",
+    "owner": "Diana Perez",
+    "phone": "5531394865",
+    "email": "perezmarquezdianaximena@gmail.com",
+    "address": "calle presa del sordo#12",
+    "conditions": "ninguna",
+    "meds": "ninguno",
+    "vaccines": [
+      "Rabia",
+      "Moquillo",
+      "Parvovirus"
+    ],
+    "services": [
+      "Consulta general"
+    ],
+    "visits": [
+      {
+        "date": "2026-05-13",
+        "symptoms": "Vómito, Diarrea",
+        "description": "lleva dias sin comer",
+        "services": "Consulta general",
+        "total": "406",
+        "status": "Pendiente"
+      }
+    ],
+    "last_date": "2026-05-13",
+    "last_status": "Pendiente"
+  }
 ];
 
-let appointmentRequests = [
-  {id:'r1', name:'Julia Méndez', phone:'+52 55 7890', pet:'Toto (Perro)', urgency:'normal', timepref:'mañana', days:['Lun','Mié'], note:'Revisión anual y vacunación', status:'pending', date:'2026-06-08'},
-  {id:'r2', name:'Roberto Sosa', phone:'+52 55 1122', pet:'Mimi (Gato)', urgency:'urgent', timepref:'tarde', days:['Mar'], note:'Lleva dos días sin comer', status:'pending', date:'2026-06-09'},
-];
+let appointmentRequests = [];
 
 // ─── TRANSLATIONS ─────────────────────────────────────────────────
 const T = {
@@ -888,6 +2208,7 @@ function doLogin() {
   }
 }
 function doLogout() {
+  if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }
   showCustomer();
 }
 
@@ -1108,11 +2429,209 @@ function generatePDF() {
 }
 
 // ─── ADMIN ────────────────────────────────────────────────────────
+// ─── LIVE SYNC FROM GOOGLE SHEET ─────────────────────────────────
+let syncInterval = null;
+let lastSyncTime = null;
+let seenRegistroIds = new Set();   // ids we've already shown to Ana (read-state)
+let seenCitaIds = new Set();
+let isFirstSync = true;
+
+// Load "seen" markers from localStorage so they persist across reloads
+function loadSeenIds() {
+  try {
+    const sr = localStorage.getItem('seen_registros');
+    const sc = localStorage.getItem('seen_citas');
+    if (sr) seenRegistroIds = new Set(JSON.parse(sr));
+    if (sc) seenCitaIds = new Set(JSON.parse(sc));
+  } catch(e) {}
+}
+function saveSeenIds() {
+  try {
+    localStorage.setItem('seen_registros', JSON.stringify([...seenRegistroIds]));
+    localStorage.setItem('seen_citas', JSON.stringify([...seenCitaIds]));
+  } catch(e) {}
+}
+
+// Build a stable ID per row (using Sheet row number + a content hash)
+function rowId(prefix, row) {
+  return prefix + '_' + (row._row || 0);
+}
+
+// Convert a sheet registro row into our internal patient/visit format
+function registroToVisit(r) {
+  return {
+    date: r['Fecha'] || '',
+    services: r['Servicios'] || '',
+    symptoms: r['Síntomas'] || '',
+    description: r['Descripción síntomas'] || '',
+    total: String(r['Total bruto (MXN)'] || 0),
+    status: r['Estado de pago'] || 'Pendiente',
+    _row: r._row
+  };
+}
+
+// Merge sheet rows into the patients structure (group by owner+pet)
+function buildPatientsFromSheet(registros) {
+  const map = new Map();
+  registros.forEach(r => {
+    const owner = ((r['Nombre']||'') + ' ' + (r['Apellido']||'')).trim();
+    const pet = (r['Mascota']||'').trim();
+    if (!owner || !pet) return;
+    const key = owner.toLowerCase() + '|' + pet.toLowerCase();
+    if (!map.has(key)) {
+      const sp = (r['Especie']||'').toLowerCase();
+      const speciesMap = {perro:'🐕 Perro', gato:'🐈 Gato', gata:'🐈 Gato', ave:'🐦 Ave', conejo:'🐇 Conejo', 'hámster':'🐹 Roedor', hamster:'🐹 Roedor'};
+      map.set(key, {
+        id: 'p' + map.size,
+        petname: pet,
+        species: speciesMap[sp] || (r['Especie']||''),
+        breed: r['Raza'] || '',
+        age: r['Edad'] || '',
+        owner: owner,
+        phone: String(r['Teléfono']||''),
+        email: r['Correo'] || '',
+        address: r['Dirección'] || '',
+        conditions: r['Condiciones'] || '—',
+        meds: r['Medicamentos'] || '—',
+        vaccines: (r['Vacunas']||'').split(',').map(s=>s.trim()).filter(Boolean),
+        services: [],
+        visits: [],
+        last_date: '',
+        last_status: '',
+        isNew: false,
+      });
+    }
+    const p = map.get(key);
+    const visit = registroToVisit(r);
+    p.visits.push(visit);
+    (r['Servicios']||'').split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{
+      if (!p.services.includes(s)) p.services.push(s);
+    });
+    // Update contact if newer record has data
+    if (r['Teléfono'] && !p.phone) p.phone = String(r['Teléfono']);
+    if (r['Correo'] && !p.email) p.email = r['Correo'];
+    if (r['Dirección'] && !p.address) p.address = r['Dirección'];
+    // Track latest
+    const visitDateISO = parseSheetDate(visit.date);
+    const lastDateISO = parseSheetDate(p.last_date);
+    if (!p.last_date || visitDateISO > lastDateISO) {
+      p.last_date = visit.date;
+      p.last_status = visit.status;
+    }
+    // Is THIS visit new (unseen)?
+    const id = rowId('reg', r);
+    if (!seenRegistroIds.has(id)) {
+      visit.isNew = true;
+      p.isNew = true;   // patient flagged if any visit is new
+    }
+  });
+  return [...map.values()].sort((a,b)=>{
+    const da = parseSheetDate(a.last_date);
+    const db = parseSheetDate(b.last_date);
+    return db.localeCompare(da);
+  });
+}
+
+// dd/MM/yyyy or dd/M/yyyy -> yyyy-MM-dd for sorting
+function parseSheetDate(s) {
+  if (!s) return '';
+  s = String(s).trim();
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  return s;
+}
+
+// Convert a cita row from sheet into our appointment request format
+function citaFromSheet(r) {
+  return {
+    id: rowId('cita', r),
+    _row: r._row,
+    name: r['Nombre'] || '',
+    phone: String(r['Teléfono'] || ''),
+    email: r['Correo'] || '',
+    pet: r['Mascota'] || '',
+    urgency: (String(r['Urgencia']||'normal').toLowerCase() === 'urgent') ? 'urgent' : 'normal',
+    timepref: r['Horario'] || '',
+    days: (r['Días preferidos']||'').split(',').map(s=>s.trim()).filter(Boolean),
+    note: r['Nota'] || '',
+    status: (String(r['Estado']||'Nueva').toLowerCase() === 'nueva') ? 'pending' : 'confirmed',
+    date: r['Fecha solicitud'] ? String(r['Fecha solicitud']).split(',')[0].split(' ')[0] : '',
+    sheetStatus: r['Estado'] || 'Nueva',
+    isNew: !seenCitaIds.has(rowId('cita', r))
+  };
+}
+
+async function liveSync(showIndicator=true) {
+  const ind = document.getElementById('syncIndicator');
+  if (showIndicator && ind) { ind.textContent = '⏳ Sincronizando...'; ind.className='sync-indicator syncing'; }
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=all&t=' + Date.now());
+    const data = await res.json();
+    if (data.status !== 'success') throw new Error(data.message || 'Error desconocido');
+
+    // Build patients from registros
+    if (data.registros) {
+      patients = buildPatientsFromSheet(data.registros);
+    }
+    // Build appointmentRequests from citas
+    if (data.citas) {
+      appointmentRequests = data.citas.map(citaFromSheet);
+    }
+
+    // On first sync, mark everything as already seen (don't flood Ana with 40 "NUEVO" badges)
+    if (isFirstSync) {
+      patients.forEach(p => {
+        (p.visits||[]).forEach(v => seenRegistroIds.add(rowId('reg', v)));
+        p.isNew = false;
+        (p.visits||[]).forEach(v => v.isNew = false);
+      });
+      appointmentRequests.forEach(c => { seenCitaIds.add(c.id); c.isNew = false; });
+      saveSeenIds();
+      isFirstSync = false;
+    }
+
+    lastSyncTime = new Date();
+    if (ind) { ind.textContent = '✓ Actualizado ' + lastSyncTime.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}); ind.className='sync-indicator ok'; }
+
+    // Re-render whatever page is currently open
+    updateStats();
+    const active = document.querySelector('.admin-page.active');
+    if (active) {
+      const id = active.id.replace('apage-','');
+      if (id==='dashboard') renderDashboard();
+      else if (id==='requests') renderRequests();
+      else if (id==='patients') renderAdminPatients();
+      else if (id==='reminders') renderAdminReminders();
+    }
+  } catch(e) {
+    console.error('Sync error:', e);
+    if (ind) { ind.textContent = '⚠ Sin conexión'; ind.className='sync-indicator error'; }
+  }
+}
+
+function markVisitAsSeen(rowNum) {
+  seenRegistroIds.add('reg_' + rowNum);
+  saveSeenIds();
+}
+function markCitaAsSeen(id) {
+  seenCitaIds.add(id);
+  saveSeenIds();
+  const c = appointmentRequests.find(r=>r.id===id);
+  if (c) c.isNew = false;
+  updateStats();
+  const active = document.querySelector('.admin-page.active');
+  if (active && active.id==='apage-requests') renderRequests();
+  if (active && active.id==='apage-dashboard') renderDashboard();
+}
+
 function initAdmin() {
   const now = new Date();
   document.getElementById('adminDateBadge').textContent = now.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  updateStats();
-  renderDashboard();
+  loadSeenIds();
+  liveSync(true);
+  // Auto-refresh every 30 seconds while admin screen is open
+  if (syncInterval) clearInterval(syncInterval);
+  syncInterval = setInterval(()=>liveSync(true), 30000);
 }
 
 function showAdminPage(id) {
@@ -1126,25 +2645,50 @@ function showAdminPage(id) {
 }
 
 function updateStats() {
-  const today = new Date(); today.setHours(0,0,0,0);
   const pending = appointmentRequests.filter(r=>r.status==='pending').length;
-  const soon = patients.filter(p=>{
-    if (!p.nextvaccine) return false;
-    const d = new Date(p.nextvaccine); d.setHours(0,0,0,0);
-    const diff = Math.round((d-today)/(1000*60*60*24));
-    return diff>=0 && diff<=14;
-  }).length;
-  const overdue = patients.filter(p=>{
-    if (!p.nextvaccine) return false;
-    const d = new Date(p.nextvaccine); d.setHours(0,0,0,0);
-    return d<today;
-  }).length;
+  // Calculate outstanding payments
+  let totalPendiente = 0;
+  let visitasPendientes = 0;
+  patients.forEach(p=>{
+    (p.visits||[]).forEach(v=>{
+      if ((v.status||'').toLowerCase().includes('pendiente')) {
+        const amt = parseFloat(v.total)||0;
+        totalPendiente += amt;
+        visitasPendientes++;
+      }
+    });
+  });
   document.getElementById('stat-patients').textContent = patients.length;
   document.getElementById('stat-requests').textContent = pending;
-  document.getElementById('stat-soon').textContent = soon;
-  document.getElementById('stat-overdue').textContent = overdue;
+  document.getElementById('stat-pendiente').textContent = '$' + totalPendiente.toLocaleString('es-MX',{maximumFractionDigits:0});
+  document.getElementById('stat-overdue').textContent = visitasPendientes;
   const badge = document.getElementById('requests-badge');
   if (pending>0) { badge.textContent=pending; badge.style.display='inline'; } else badge.style.display='none';
+  updateTabBadges();
+}
+
+function updateTabBadges() {
+  // Add a red dot to a tab if there are unseen items on it
+  const tabs = {
+    'atab-dashboard': appointmentRequests.some(r=>r.isNew) || patients.some(p=>p.isNew),
+    'atab-requests':  appointmentRequests.some(r=>r.isNew),
+    'atab-patients':  patients.some(p=>p.isNew),
+  };
+  Object.entries(tabs).forEach(([id, hasNew])=>{
+    const tab = document.getElementById(id);
+    if (!tab) return;
+    let dot = tab.querySelector('.nuevo-tab-dot');
+    if (hasNew && !dot) {
+      dot = document.createElement('span');
+      dot.className = 'nuevo-tab-dot';
+      tab.appendChild(dot);
+    } else if (!hasNew && dot) {
+      dot.remove();
+    }
+  });
+  // Browser tab title
+  const totalNew = appointmentRequests.filter(r=>r.isNew).length + patients.filter(p=>p.isNew).length;
+  document.title = (totalNew>0 ? `(${totalNew}) ` : '') + 'Anamalitos – Clínica Veterinaria CDMX';
 }
 
 function renderDashboard() {
@@ -1154,17 +2698,25 @@ function renderDashboard() {
   if (!pending.length) { rp.innerHTML='<div class="empty-state" style="padding:2rem;"><div class="empty-icon">📅</div><span>No hay solicitudes pendientes</span></div>'; }
   else rp.innerHTML = pending.map(r=>requestItemHTML(r,true)).join('');
 
-  // Vaccine alerts preview (top 4, sorted by urgency)
-  const today = new Date(); today.setHours(0,0,0,0);
-  const alerts = patients
-    .filter(p=>p.nextvaccine)
-    .map(p=>{ const d=new Date(p.nextvaccine); d.setHours(0,0,0,0); return {...p,diff:Math.round((d-today)/(1000*60*60*24))}; })
-    .filter(p=>p.diff<=14)
-    .sort((a,b)=>a.diff-b.diff)
-    .slice(0,4);
-  const rr = document.getElementById('dash-reminders-preview');
-  if (!alerts.length) { rr.innerHTML='<div class="empty-state" style="padding:2rem;"><div class="empty-icon">💉</div><span>Todo en orden</span></div>'; }
-  else rr.innerHTML = alerts.map(p=>reminderItemHTML(p)).join('');
+  // Outstanding payments preview (top 5)
+  const payments = [];
+  patients.forEach(p=>{
+    (p.visits||[]).forEach(v=>{
+      if ((v.status||'').toLowerCase().includes('pendiente') && parseFloat(v.total)>0) {
+        payments.push({...v, owner:p.owner, petname:p.petname, phone:p.phone});
+      }
+    });
+  });
+  payments.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const top = payments.slice(0,5);
+  const pp = document.getElementById('dash-payments-preview');
+  if (!top.length) { pp.innerHTML='<div class="empty-state" style="padding:2rem;"><div class="empty-icon">💸</div><span>Todo pagado, ¡bien hecho!</span></div>'; }
+  else pp.innerHTML = top.map(v=>`<div class="reminder-item">
+    <div class="reminder-dot dot-amber"></div>
+    <div style="flex:1;"><div class="reminder-pet">${v.petname} <span style="color:var(--text2);font-weight:400;font-size:12px;">· ${v.owner}</span></div>
+      <div class="reminder-info">${v.date} · ${v.services||'—'}</div></div>
+    <div class="reminder-due due-amber" style="text-align:right;">$${parseFloat(v.total||0).toLocaleString('es-MX',{maximumFractionDigits:0})}<br><strong>Pendiente</strong></div>
+  </div>`).join('');
 
   // Recent patients (top 5)
   const tbody = document.getElementById('dash-patients-body');
@@ -1173,9 +2725,16 @@ function renderDashboard() {
       <td><strong>${p.petname}</strong></td>
       <td>${p.species}</td>
       <td>${p.owner}</td>
-      <td>${p.phone}</td>
-      <td><span class="pill pill-gray">${p.services&&p.services.length?p.services[p.services.length-1]:'—'}</span></td>
+      <td>${p.phone||'—'}</td>
+      <td>${p.last_status ? statusPill(p.last_status) : '<span class="pill pill-gray">—</span>'}</td>
     </tr>`).join('');
+}
+
+function statusPill(s) {
+  const t = (s||'').toLowerCase();
+  if (t.includes('pagado')) return '<span class="pill pill-green">✓ Pagado</span>';
+  if (t.includes('pendiente')) return '<span class="pill pill-amber">⏳ Pendiente</span>';
+  return `<span class="pill pill-gray">${s}</span>`;
 }
 
 function requestItemHTML(r, compact=false) {
@@ -1183,14 +2742,16 @@ function requestItemHTML(r, compact=false) {
     ? '<span class="pill pill-red">🚨 Urgente</span>'
     : '<span class="pill pill-green">📅 Normal</span>';
   const daysStr = r.days&&r.days.length?r.days.join(', '):'—';
-  return `<div class="request-item" id="req-${r.id}">
+  const newBadge = r.isNew ? '<span class="nuevo-badge">NUEVO</span>' : '';
+  const nuevoClass = r.isNew ? ' nuevo-card' : '';
+  return `<div class="request-item${nuevoClass}" id="req-${r.id}" onclick="markCitaAsSeen('${r.id}')">
     <div class="request-dot ${r.urgency==='urgent'?'dot-red':'dot-green'}"></div>
     <div class="request-body">
-      <div class="request-name">${r.name} ${urgPill}</div>
+      <div class="request-name">${r.name} ${urgPill}${newBadge}</div>
       <div class="request-meta">🐾 ${r.pet} · 📞 ${r.phone} · ⏰ ${r.timepref||'—'} · 📆 ${daysStr} · ${r.date}</div>
       ${r.note?`<div class="request-note">"${r.note}"</div>`:''}
     </div>
-    ${!compact?`<div class="request-actions">
+    ${!compact?`<div class="request-actions" onclick="event.stopPropagation()">
       <button class="btn-sm btn-sm-wa" onclick="openWhatsApp('${r.id}')" title="Abrir WhatsApp con mensaje listo">📱 WhatsApp</button>
       <button class="btn-sm btn-sm-green" onclick="confirmRequest('${r.id}')">✓ Confirmar</button>
       <button class="btn-sm btn-sm-gray" onclick="dismissRequest('${r.id}')">Archivar</button>
@@ -1235,11 +2796,21 @@ function renderRequests() {
 
 function confirmRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
-  if (r) { r.status='confirmed'; updateStats(); renderRequests(); renderDashboard(); }
+  if (r) {
+    r.status='confirmed';
+    seenCitaIds.add(id); r.isNew=false;
+    saveSeenIds();
+    updateStats(); renderRequests(); renderDashboard();
+  }
 }
 function dismissRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
-  if (r) { r.status='dismissed'; updateStats(); renderRequests(); renderDashboard(); }
+  if (r) {
+    r.status='dismissed';
+    seenCitaIds.add(id); r.isNew=false;
+    saveSeenIds();
+    updateStats(); renderRequests(); renderDashboard();
+  }
 }
 
 // Opens WhatsApp with a pre-filled confirmation message in Spanish
@@ -1271,38 +2842,97 @@ function openWhatsApp(id) {
 
 function renderAdminPatients() {
   const q = (document.getElementById('adminSearch').value||'').toLowerCase();
-  const filtered = patients.filter(p=>
-    !q || p.petname.toLowerCase().includes(q) || p.owner.toLowerCase().includes(q) || p.species.toLowerCase().includes(q)
+  const filter = window.patientFilter || 'all';
+  let filtered = patients.filter(p=>
+    !q || p.petname.toLowerCase().includes(q) || p.owner.toLowerCase().includes(q) || p.species.toLowerCase().includes(q) || (p.phone||'').includes(q)
   );
-  document.getElementById('patients-count-label').textContent = `${patients.length} paciente${patients.length!==1?'s':''}`;
+  if (filter==='pendiente') {
+    filtered = filtered.filter(p=>(p.visits||[]).some(v=>(v.status||'').toLowerCase().includes('pendiente')));
+  } else if (filter==='pagado') {
+    filtered = filtered.filter(p=>(p.last_status||'').toLowerCase().includes('pagado'));
+  }
+  document.getElementById('patients-count-label').textContent = `${filtered.length} de ${patients.length}`;
   const list = document.getElementById('admin-patients-list');
   if (!filtered.length) { list.innerHTML='<div class="empty-state"><div class="empty-icon">🐾</div><span>No se encontraron pacientes.</span></div>'; return; }
   list.innerHTML = `<table class="admin-table">
-    <thead><tr><th>Mascota</th><th>Especie / Raza</th><th>Dueño</th><th>Contacto</th><th>Vacuna</th><th>Servicios</th></tr></thead>
+    <thead><tr><th>Mascota</th><th>Especie / Raza</th><th>Dueño</th><th>Contacto</th><th>Última visita</th><th>Estado</th></tr></thead>
     <tbody>
-    ${filtered.map(p=>`
-      <tr onclick="toggleAdminDetail('${p.id}')" style="cursor:pointer;">
-        <td><strong>${p.petname}</strong></td>
-        <td>${p.species}${p.breed?' · '+p.breed:''}</td>
+    ${filtered.map(p=>{
+      const visitCount = (p.visits||[]).length;
+      const visitsHTML = (p.visits||[]).slice().reverse().map(v=>{
+        const status = statusPill(v.status);
+        const total = parseFloat(v.total)||0;
+        return `<tr style="background:rgba(0,0,0,0.02);">
+          <td style="padding:8px 16px;font-size:12px;color:var(--text2);">📅 ${v.date||'—'}</td>
+          <td style="padding:8px 16px;font-size:12px;" colspan="3">
+            ${v.services?`<strong style="color:var(--text);">${v.services}</strong>`:'<em style="color:var(--text3);">Sin servicios</em>'}
+            ${v.symptoms?`<br><span style="color:var(--text2);">🩺 ${v.symptoms}</span>`:''}
+            ${v.description?`<br><span style="color:var(--text3);font-style:italic;">"${v.description.replace(/\n/g,' ')}"</span>`:''}
+          </td>
+          <td style="padding:8px 16px;font-size:12px;text-align:right;">${total>0?'$'+total.toLocaleString('es-MX'):'—'}</td>
+          <td style="padding:8px 16px;">${status}</td>
+        </tr>`;
+      }).join('');
+      return `
+      <tr onclick="toggleAdminDetail('${p.id}'); markPatientSeen('${p.id}')" style="cursor:pointer;" class="${p.isNew?'nuevo-row':''}">
+        <td><strong>${p.petname}</strong>${p.isNew?'<span class="nuevo-badge">NUEVO</span>':''}${visitCount>1?`<br><small style="color:var(--text3);">${visitCount} visitas</small>`:''}</td>
+        <td>${p.species}${p.breed?'<br><small style="color:var(--text3);">'+p.breed+'</small>':''}${p.age?' · '+p.age:''}</td>
         <td>${p.owner}</td>
-        <td>${p.phone}<br><small style="color:var(--text3);">${p.email}</small></td>
-        <td>${p.nextvaccine?vaccinePill(p.nextvaccine):'—'}</td>
-        <td><span class="pill pill-gray">${p.services&&p.services.length?p.services[p.services.length-1]:'—'}</span></td>
+        <td>${p.phone||'—'}${p.email?'<br><small style="color:var(--text3);">'+p.email+'</small>':''}</td>
+        <td>${p.last_date||'—'}</td>
+        <td>${statusPill(p.last_status)}</td>
       </tr>
       <tr id="adetail-${p.id}" style="display:none;">
         <td colspan="6" style="background:var(--sand);padding:1rem 1.25rem;">
           <div class="patient-detail-row" style="margin-bottom:.75rem;">
-            <div><div class="detail-label">Condiciones</div><div class="detail-value">${p.conditions||'—'}</div></div>
-            <div><div class="detail-label">Medicamentos</div><div class="detail-value">${p.meds||'—'}</div></div>
-            <div><div class="detail-label">Vacunas registradas</div><div class="detail-value">${(p.vaccines||[]).join(', ')||'—'}</div></div>
-            <div><div class="detail-label">Edad</div><div class="detail-value">${p.age||'—'}</div></div>
+            <div><div class="detail-label">📍 Dirección</div><div class="detail-value">${p.address||'—'}</div></div>
+            <div><div class="detail-label">💉 Vacunas registradas</div><div class="detail-value">${(p.vaccines||[]).join(', ')||'—'}</div></div>
+            <div><div class="detail-label">⚕️ Condiciones</div><div class="detail-value">${p.conditions||'—'}</div></div>
+            <div><div class="detail-label">💊 Medicamentos</div><div class="detail-value">${p.meds||'—'}</div></div>
           </div>
-          <div style="font-size:12px;color:var(--text2);">Servicios: ${(p.services||[]).join(', ')||'—'}</div>
+          ${p.phone?`<div style="margin-bottom:.75rem;">
+            <button class="btn-sm btn-sm-wa" onclick="openWhatsAppForPatient('${p.id}')">📱 Contactar por WhatsApp</button>
+          </div>`:''}
+          ${visitCount?`<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.06em;margin-bottom:.5rem;">Historial de visitas (${visitCount})</div>
+          <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;">
+            <tbody>${visitsHTML}</tbody>
+          </table>`:'<em style="color:var(--text3);">Sin visitas registradas</em>'}
         </td>
       </tr>
-    `).join('')}
+    `;}).join('')}
     </tbody>
   </table>`;
+}
+
+function openWhatsAppForPatient(id) {
+  const p = patients.find(x=>x.id===id);
+  if (!p) return;
+  let phone = (p.phone||'').replace(/[^\d]/g,'');
+  if (!phone) { alert('Sin número de teléfono.'); return; }
+  if (!phone.startsWith('52') && phone.length===10) phone = '52'+phone;
+  const firstName = (p.owner||'').split(' ')[0];
+  const msg = `¡Hola ${firstName}! 🐾 Soy Ana de Anamalitos. Te contacto sobre ${p.petname}.`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function markPatientSeen(id) {
+  const p = patients.find(x=>x.id===id);
+  if (!p) return;
+  (p.visits||[]).forEach(v=>{
+    if (v._row) seenRegistroIds.add('reg_'+v._row);
+    v.isNew = false;
+  });
+  p.isNew = false;
+  saveSeenIds();
+  updateStats();
+  updateTabBadges();
+}
+
+function setPatientFilter(f) {
+  window.patientFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('filter-'+f).classList.add('active');
+  renderAdminPatients();
 }
 
 function vaccinePill(dateStr) {
@@ -1320,14 +2950,52 @@ function toggleAdminDetail(id) {
 }
 
 function renderAdminReminders() {
+  // Without "next vaccine" dates we show patients sorted by most recent vaccine service
   const today = new Date(); today.setHours(0,0,0,0);
-  const withDue = patients
-    .filter(p=>p.nextvaccine)
-    .map(p=>{ const d=new Date(p.nextvaccine); d.setHours(0,0,0,0); return {...p,diff:Math.round((d-today)/(1000*60*60*24))}; })
-    .sort((a,b)=>a.diff-b.diff);
+  // Find patients who had a vaccine in the past 12 months (rough check via service name)
+  const withVaccines = patients
+    .filter(p=>(p.services||[]).some(s=>/vacuna/i.test(s)) || (p.vaccines||[]).length>0)
+    .map(p=>{
+      // Find latest visit date with a vaccine
+      let latestVacDate = null;
+      (p.visits||[]).forEach(v=>{
+        if (/vacuna/i.test(v.services||'') || /vacuna/i.test(v.symptoms||'')) {
+          if (!latestVacDate || v.date>latestVacDate) latestVacDate = v.date;
+        }
+      });
+      // If no specific vaccine visit, use last visit
+      latestVacDate = latestVacDate || p.last_date;
+      const diff = latestVacDate ? Math.round((today-new Date(latestVacDate))/(1000*60*60*24)) : null;
+      return {...p, vacDate: latestVacDate, daysSince: diff};
+    })
+    .sort((a,b)=>(b.daysSince||0)-(a.daysSince||0));
   const list = document.getElementById('admin-reminders-list');
-  if (!withDue.length) { list.innerHTML='<div class="empty-state"><div class="empty-icon">💉</div><span>No hay pacientes con vacunas registradas.</span></div>'; return; }
-  list.innerHTML = withDue.map(p=>reminderItemHTML(p)).join('');
+  if (!withVaccines.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">💉</div><span>No hay pacientes con vacunas registradas.</span></div>';
+    return;
+  }
+  list.innerHTML = `<div style="padding:1rem 1.25rem;font-size:13px;color:var(--text2);background:var(--blue-bg);border-bottom:1px solid var(--blue-b);">
+    ℹ️ Pacientes ordenados por la última vacuna registrada. Los que están más arriba probablemente necesitan refuerzo pronto.
+  </div>` + withVaccines.map(p=>{
+    let dotClass='dot-green', dueClass='due-green', label='';
+    if (p.daysSince===null) { dotClass='dot-amber'; dueClass='due-amber'; label='Sin fecha'; }
+    else if (p.daysSince>365) { dotClass='dot-red'; dueClass='due-red'; label=`Hace ${Math.round(p.daysSince/30)} meses`; }
+    else if (p.daysSince>180) { dotClass='dot-amber'; dueClass='due-amber'; label=`Hace ${Math.round(p.daysSince/30)} meses`; }
+    else label=`Hace ${p.daysSince}d`;
+    const phoneClean = (p.phone||'').replace(/[^\d]/g,'');
+    return `<div class="reminder-item">
+      <div class="reminder-dot ${dotClass}"></div>
+      <div style="flex:1;">
+        <div class="reminder-pet">${p.petname} <span style="color:var(--text2);font-weight:400;font-size:12px;">· ${p.species}</span></div>
+        <div class="reminder-info">${p.owner} · ${p.phone||'sin teléfono'}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">Vacunas registradas: ${(p.vaccines||[]).join(', ')||'—'}</div>
+      </div>
+      <div class="reminder-due ${dueClass}" style="text-align:right;">
+        ${p.vacDate||'—'}<br><strong>${label}</strong>
+        ${phoneClean?`<br><button class="btn-sm btn-sm-wa" style="margin-top:6px;font-size:11px;padding:3px 8px;" onclick="openWhatsAppForPatient('${p.id}')">📱 Recordar</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────
