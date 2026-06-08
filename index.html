@@ -205,9 +205,10 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
 ══════════════════════════════ */
 #screen-login {
   min-height: 100vh;
-  display: flex; align-items: center; justify-content: center;
+  align-items: center; justify-content: center;
   background: linear-gradient(135deg, var(--green-d) 0%, var(--green) 100%);
 }
+#screen-login.active { display: flex; }
 .login-box {
   background: var(--surface); border-radius: 16px;
   padding: 2.5rem 2rem; width: 100%; max-width: 360px;
