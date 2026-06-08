@@ -316,6 +316,8 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
 .btn-sm { padding: 5px 12px; font-size: 12px; font-weight: 600; border-radius: var(--r-sm); border: none; cursor: pointer; transition: all 0.15s; }
 .btn-sm-green { background: var(--green-l); color: var(--green); border: 1px solid var(--green-b); }
 .btn-sm-green:hover { background: var(--green); color: #fff; }
+.btn-sm-wa { background: #25D366; color: #fff; border: 1px solid #1DA851; }
+.btn-sm-wa:hover { background: #1DA851; }
 .btn-sm-gray { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
 .btn-sm-gray:hover { background: var(--border); }
 
@@ -1189,6 +1191,7 @@ function requestItemHTML(r, compact=false) {
       ${r.note?`<div class="request-note">"${r.note}"</div>`:''}
     </div>
     ${!compact?`<div class="request-actions">
+      <button class="btn-sm btn-sm-wa" onclick="openWhatsApp('${r.id}')" title="Abrir WhatsApp con mensaje listo">📱 WhatsApp</button>
       <button class="btn-sm btn-sm-green" onclick="confirmRequest('${r.id}')">✓ Confirmar</button>
       <button class="btn-sm btn-sm-gray" onclick="dismissRequest('${r.id}')">Archivar</button>
     </div>`:''}
@@ -1237,6 +1240,33 @@ function confirmRequest(id) {
 function dismissRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
   if (r) { r.status='dismissed'; updateStats(); renderRequests(); renderDashboard(); }
+}
+
+// Opens WhatsApp with a pre-filled confirmation message in Spanish
+function openWhatsApp(id) {
+  const r = appointmentRequests.find(r=>r.id===id);
+  if (!r) return;
+  // Clean phone: only digits, ensure country code
+  let phone = (r.phone||'').replace(/[^\d]/g,'');
+  if (!phone) { alert('No hay número de teléfono para este cliente.'); return; }
+  if (!phone.startsWith('52') && phone.length===10) phone = '52'+phone;
+
+  // Build a friendly, personal message – Ana can still edit before sending
+  const firstName = (r.name||'').split(' ')[0];
+  const dayMap = {Lun:'lunes',Mar:'martes','Mié':'miércoles',Jue:'jueves',Vie:'viernes'};
+  const dayPref = r.days && r.days.length ? r.days.map(d=>dayMap[d]||d).join(' o ') : '';
+  const timeMap = {'mañana':'por la mañana','tarde':'por la tarde','noche':'por la noche'};
+  const timePref = r.timepref && timeMap[r.timepref] ? timeMap[r.timepref] : '';
+
+  let msg = `¡Hola ${firstName}! 🐾 Soy Ana de Anamalitos. `;
+  msg += `Recibí tu solicitud de cita para ${r.pet}. `;
+  if (dayPref || timePref) {
+    msg += `Te puedo ofrecer ${dayPref?dayPref:''}${dayPref&&timePref?' ':''}${timePref?timePref:''} — `;
+  }
+  msg += `¿qué día y hora te queda mejor? ¡Nos vemos pronto! 💚`;
+
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
 }
 
 function renderAdminPatients() {
