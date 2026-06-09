@@ -436,6 +436,8 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
 .btn-sm-wa:hover { background: #1DA851; }
 .btn-sm-gray { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
 .btn-sm-gray:hover { background: var(--border); }
+.btn-sm-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-b); padding: 5px 9px; }
+.btn-sm-red:hover { background: var(--red); color: #fff; }
 
 /* ══════════════════════════════
    ADMIN – PATIENT SEARCH
@@ -2678,6 +2680,12 @@ function parseSheetDate(s) {
 
 // Convert a cita row from sheet into our appointment request format
 function citaFromSheet(r) {
+  const sheetStatus = String(r['Estado']||'Nueva').trim();
+  const sl = sheetStatus.toLowerCase();
+  let appStatus = 'pending';
+  if (sl === 'confirmada') appStatus = 'confirmed';
+  else if (sl === 'archivada' || sl === 'cancelada') appStatus = 'dismissed';
+  else if (sl === 'contactada') appStatus = 'contacted';
   return {
     id: rowId('cita', r),
     _row: r._row,
@@ -2689,9 +2697,9 @@ function citaFromSheet(r) {
     timepref: r['Horario'] || '',
     days: (r['Días preferidos']||'').split(',').map(s=>s.trim()).filter(Boolean),
     note: r['Nota'] || '',
-    status: (String(r['Estado']||'Nueva').toLowerCase() === 'nueva') ? 'pending' : 'confirmed',
+    status: appStatus,
     date: r['Fecha solicitud'] ? String(r['Fecha solicitud']).split(',')[0].split(' ')[0] : '',
-    sheetStatus: r['Estado'] || 'Nueva',
+    sheetStatus: sheetStatus,
     isNew: !seenCitaIds.has(rowId('cita', r))
   };
 }
@@ -3082,7 +3090,8 @@ function requestItemHTML(r, compact=false) {
     ${!compact?`<div class="request-actions" onclick="event.stopPropagation()">
       <button class="btn-sm btn-sm-wa" onclick="openWhatsApp('${r.id}')" title="Abrir WhatsApp con mensaje listo">📱 WhatsApp</button>
       <button class="btn-sm btn-sm-green" onclick="confirmRequest('${r.id}')">✓ Confirmar</button>
-      <button class="btn-sm btn-sm-gray" onclick="dismissRequest('${r.id}')">Archivar</button>
+      <button class="btn-sm btn-sm-gray" onclick="dismissRequest('${r.id}')">📦 Archivar</button>
+      <button class="btn-sm btn-sm-red" onclick="deleteRequest('${r.id}')" title="Eliminar permanentemente">🗑</button>
     </div>`:''}
   </div>`;
 }
@@ -3122,23 +3131,59 @@ function renderRequests() {
   list.innerHTML = html;
 }
 
+// Send a status update to the Sheet via POST. POST has mode:'no-cors' so we can't
+// read the response — that's fine, we already update the UI optimistically.
+function sendCitaStatusUpdate(row, newStatus) {
+  if (!row) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'update_cita_status', row, status: newStatus })
+  }).catch(e=>console.error('Status update failed:', e));
+}
+
+function sendCitaDelete(row) {
+  if (!row) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'delete_cita', row })
+  }).catch(e=>console.error('Delete failed:', e));
+}
+
 function confirmRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
-  if (r) {
-    r.status='confirmed';
-    seenCitaIds.add(id); r.isNew=false;
-    saveSeenIds();
-    updateStats(); renderRequests(); renderDashboard();
-  }
+  if (!r) return;
+  r.status='confirmed'; r.sheetStatus='Confirmada';
+  seenCitaIds.add(id); r.isNew=false;
+  saveSeenIds();
+  sendCitaStatusUpdate(r._row, 'Confirmada');
+  updateStats(); renderRequests(); renderDashboard();
 }
+
 function dismissRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
-  if (r) {
-    r.status='dismissed';
-    seenCitaIds.add(id); r.isNew=false;
-    saveSeenIds();
-    updateStats(); renderRequests(); renderDashboard();
-  }
+  if (!r) return;
+  r.status='dismissed'; r.sheetStatus='Archivada';
+  seenCitaIds.add(id); r.isNew=false;
+  saveSeenIds();
+  sendCitaStatusUpdate(r._row, 'Archivada');
+  updateStats(); renderRequests(); renderDashboard();
+}
+
+function deleteRequest(id) {
+  const r = appointmentRequests.find(r=>r.id===id);
+  if (!r) return;
+  const confirmText = `¿Eliminar permanentemente la solicitud de ${r.name} (${r.pet})?\n\nEsta acción no se puede deshacer.`;
+  if (!confirm(confirmText)) return;
+  sendCitaDelete(r._row);
+  // Remove from local list immediately (optimistic)
+  appointmentRequests = appointmentRequests.filter(x=>x.id!==id);
+  seenCitaIds.add(id);
+  saveSeenIds();
+  updateStats(); renderRequests(); renderDashboard();
 }
 
 // Opens WhatsApp with a pre-filled confirmation message in Spanish
