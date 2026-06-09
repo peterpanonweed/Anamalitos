@@ -5,35 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Anamalitos – Clínica Veterinaria CDMX</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --green:    #2d6a4f;
-  --green-d:  #1e4d38;
-  --green-l:  #e8f5ee;
-  --green-b:  #a8d5bc;
-  --sand:     #f7f6f2;
-  --surface:  #ffffff;
-  --surface2: #f0ede6;
-  --border:   #ddd9ce;
-  --border2:  #c8c3b5;
-  --text:     #1a1917;
-  --text2:    #5a5750;
-  --text3:    #9a9690;
-  --red:      #e24b4a;
-  --red-bg:   #fcebeb;
-  --red-b:    #f09595;
-  --amber:    #ba7517;
-  --amber-bg: #faeeda;
-  --amber-b:  #fac775;
-  --blue:     #1a5276;
-  --blue-bg:  #eaf2fb;
-  --blue-b:   #b5d4f4;
-  --r:        10px;
-  --r-sm:     6px;
+  /* ── Palette: Türkis + Orange (anamalitos.mx street-art) ── */
+  --turquoise:    #2e7d8a;   /* Primär: Header, Buttons */
+  --turquoise-d:  #173b42;   /* Dunkles Türkis: Text, dunkle Flächen */
+  --turquoise-l:  #e2eff0;   /* Helles Türkis: Tints, Hover */
+  --turquoise-b:  #9cc7cd;   /* Türkis-Mittelton / Border */
+  --orange:       #e8893a;   /* Sonnen-Orange: CTAs, NUEVO, Akzent */
+  --orange-d:     #d2701f;
+  --cream:        #f5ecd9;   /* Warmes Creme: App-Hintergrund */
+  --paper:        #fffdf7;   /* Warmweiße Karten */
+  --rust:         #c14a2b;   /* Rot-Orange: Warnung, Pendiente, Eliminar */
+  --parrot:       #2a83a0;   /* Ara-Blau: Info */
+  --yolk:         #f2c14e;   /* Papageien-Gelb: verspielter Akzent */
+
+  /* ── Legacy-Aliase: alte Variablennamen → neue Palette (keine Referenz bricht) ── */
+  --green:    var(--turquoise);
+  --green-d:  var(--turquoise-d);
+  --green-l:  var(--turquoise-l);
+  --green-b:  var(--turquoise-b);
+  --sand:     var(--cream);
+  --surface:  var(--paper);
+  --surface2: #efe1c4;
+  --border:   #e4d8bb;
+  --border2:  #cdbf9c;
+  --text:     var(--turquoise-d);
+  --text2:    #536e74;
+  --text3:    #8aa0a3;
+  --red:      var(--rust);
+  --red-bg:   #f7e3da;
+  --red-b:    #e0a78f;
+  --amber:    var(--orange);
+  --amber-bg: #fcecd9;
+  --amber-b:  #f4c089;
+  --blue:     var(--parrot);
+  --blue-bg:  #e3f0f4;
+  --blue-b:   #a8cfdc;
+
+  /* ── Typografie ── */
+  --display:  'Fredoka', system-ui, sans-serif;
+  --body:     'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono:     'DM Mono', ui-monospace, monospace;
+
+  /* ── Radien ── */
+  --r:        12px;
+  --r-sm:     7px;
 }
 
-body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; color: var(--text); line-height: 1.6; min-height: 100vh; }
+body { background: var(--sand); font-family: var(--body); font-size: 15px; color: var(--text); line-height: 1.6; min-height: 100vh; }
+h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-text h1 { font-family: var(--display); letter-spacing: -0.01em; }
 
 /* ══════════════════════════════
    SCREENS
@@ -438,6 +463,68 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
 .btn-sm-gray:hover { background: var(--border); }
 .btn-sm-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-b); padding: 5px 9px; }
 .btn-sm-red:hover { background: var(--red); color: #fff; }
+
+/* ─── PAGO TOGGLE BUTTON ───────── */
+.pago-toggle-btn {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.pago-toggle-btn.is-pendiente {
+  background: var(--green-l);
+  color: var(--green);
+  border-color: var(--green-b);
+}
+.pago-toggle-btn.is-pendiente:hover { background: var(--green); color: #fff; }
+.pago-toggle-btn.is-pagado {
+  background: var(--surface2);
+  color: var(--text2);
+  border-color: var(--border);
+}
+.pago-toggle-btn.is-pagado:hover { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-b); }
+
+/* ─── PATIENT NOTE BOX ─────────── */
+.patient-note-box {
+  background: #fff8e7;
+  border: 1px solid #f0d875;
+  border-left: 4px solid #d4a625;
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  margin-bottom: 0.875rem;
+}
+.patient-note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.patient-note-input {
+  width: 100%;
+  min-height: 50px;
+  padding: 8px 10px;
+  border: 1px solid #e8d68c;
+  border-radius: var(--r-sm);
+  background: #fffdf6;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text);
+  resize: vertical;
+  line-height: 1.5;
+}
+.patient-note-input:focus {
+  outline: none;
+  border-color: #d4a625;
+  box-shadow: 0 0 0 3px rgba(212,166,37,0.15);
+}
+.patient-note-input::placeholder { color: #b89a4a; font-style: italic; }
 
 /* ══════════════════════════════
    ADMIN – PATIENT SEARCH
@@ -2635,10 +2722,13 @@ function buildPatientsFromSheet(registros) {
         visits: [],
         last_date: '',
         last_status: '',
+        note: r['Notas paciente'] || '',
         isNew: false,
       });
     }
     const p = map.get(key);
+    // Update note if this row has one and we don't yet
+    if (r['Notas paciente'] && !p.note) p.note = r['Notas paciente'];
     const visit = registroToVisit(r);
     p.visits.push(visit);
     (r['Servicios']||'').split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{
@@ -3153,6 +3243,63 @@ function sendCitaDelete(row) {
   }).catch(e=>console.error('Delete failed:', e));
 }
 
+// Update payment status of a single visit (registro row)
+function sendPagoUpdate(row, newStatus) {
+  if (!row) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'update_pago_status', row, status: newStatus })
+  }).catch(e=>console.error('Pago update failed:', e));
+}
+
+// Update a patient's note (applied to all their visits in the sheet)
+function sendPatientNote(owner, pet, note) {
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'update_patient_note', owner, pet, note })
+  }).catch(e=>console.error('Note update failed:', e));
+}
+
+// Toggle a single visit's pago status between Pagado / Pendiente
+function togglePagoStatus(patientId, visitRow) {
+  const p = patients.find(x=>x.id===patientId);
+  if (!p) return;
+  const v = (p.visits||[]).find(x=>x._row===visitRow);
+  if (!v) return;
+  const current = (v.status||'').toLowerCase();
+  const newStatus = current.includes('pagado') ? 'Pendiente' : 'Pagado';
+  v.status = newStatus;
+  // Update last_status if this was the latest visit
+  const latest = (p.visits||[]).slice().sort((a,b)=>parseSheetDate(b.date).localeCompare(parseSheetDate(a.date)))[0];
+  if (latest && latest._row === visitRow) p.last_status = newStatus;
+  sendPagoUpdate(visitRow, newStatus);
+  updateStats();
+  renderAdminPatients();
+  renderDashboard();
+}
+
+// Save a patient note (called from textarea on blur or save button)
+function savePatientNote(patientId) {
+  const p = patients.find(x=>x.id===patientId);
+  if (!p) return;
+  const ta = document.getElementById('note-' + patientId);
+  if (!ta) return;
+  const note = ta.value;
+  p.note = note;
+  sendPatientNote(p.owner, p.petname, note);
+  // Visual confirmation
+  const btn = document.getElementById('note-save-' + patientId);
+  if (btn) {
+    btn.textContent = '✓ Guardado';
+    btn.disabled = true;
+    setTimeout(()=>{ btn.textContent = '💾 Guardar nota'; btn.disabled = false; }, 1500);
+  }
+}
+
 function confirmRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
   if (!r) return;
@@ -3235,20 +3382,22 @@ function renderAdminPatients() {
       const visitsHTML = (p.visits||[]).slice().reverse().map(v=>{
         const status = statusPill(v.status);
         const total = parseFloat(v.total)||0;
+        const isPagado = (v.status||'').toLowerCase().includes('pagado');
+        const toggleBtn = v._row ? `<button class="pago-toggle-btn ${isPagado?'is-pagado':'is-pendiente'}" onclick="event.stopPropagation(); togglePagoStatus('${p.id}', ${v._row})" title="${isPagado?'Marcar como pendiente':'Marcar como pagado'}">${isPagado?'↻ Marcar pendiente':'✓ Marcar pagado'}</button>` : '';
         return `<tr style="background:rgba(0,0,0,0.02);">
-          <td style="padding:8px 16px;font-size:12px;color:var(--text2);">📅 ${v.date||'—'}</td>
+          <td style="padding:8px 16px;font-size:12px;color:var(--text2);white-space:nowrap;">📅 ${v.date||'—'}</td>
           <td style="padding:8px 16px;font-size:12px;" colspan="3">
             ${v.services?`<strong style="color:var(--text);">${v.services}</strong>`:'<em style="color:var(--text3);">Sin servicios</em>'}
             ${v.symptoms?`<br><span style="color:var(--text2);">🩺 ${v.symptoms}</span>`:''}
             ${v.description?`<br><span style="color:var(--text3);font-style:italic;">"${v.description.replace(/\n/g,' ')}"</span>`:''}
           </td>
-          <td style="padding:8px 16px;font-size:12px;text-align:right;">${total>0?'$'+total.toLocaleString('es-MX'):'—'}</td>
-          <td style="padding:8px 16px;">${status}</td>
+          <td style="padding:8px 16px;font-size:12px;text-align:right;white-space:nowrap;">${total>0?'$'+total.toLocaleString('es-MX'):'—'}</td>
+          <td style="padding:8px 16px;white-space:nowrap;">${status}${toggleBtn?'<br>'+toggleBtn:''}</td>
         </tr>`;
       }).join('');
       return `
       <tr onclick="toggleAdminDetail('${p.id}'); markPatientSeen('${p.id}')" style="cursor:pointer;" class="${p.isNew?'nuevo-row':''}">
-        <td><strong>${p.petname}</strong>${p.isNew?'<span class="nuevo-badge">NUEVO</span>':''}${visitCount>1?`<br><small style="color:var(--text3);">${visitCount} visitas</small>`:''}</td>
+        <td><strong>${p.petname}</strong>${p.isNew?'<span class="nuevo-badge">NUEVO</span>':''}${visitCount>1?`<br><small style="color:var(--text3);">${visitCount} visitas</small>`:''}${p.note?'<br><small style="color:var(--amber);" title="'+p.note.replace(/"/g,'&quot;')+'">📝 con notas</small>':''}</td>
         <td>${p.species}${p.breed?'<br><small style="color:var(--text3);">'+p.breed+'</small>':''}${p.age?' · '+p.age:''}</td>
         <td>${p.owner}</td>
         <td>${p.phone||'—'}${p.email?'<br><small style="color:var(--text3);">'+p.email+'</small>':''}</td>
@@ -3263,6 +3412,15 @@ function renderAdminPatients() {
             <div><div class="detail-label">⚕️ Condiciones</div><div class="detail-value">${p.conditions||'—'}</div></div>
             <div><div class="detail-label">💊 Medicamentos</div><div class="detail-value">${p.meds||'—'}</div></div>
           </div>
+
+          <div class="patient-note-box" onclick="event.stopPropagation()">
+            <div class="patient-note-header">
+              <span class="detail-label" style="margin:0;">📝 Notas internas (solo para ti)</span>
+              <button class="btn-sm btn-sm-green" id="note-save-${p.id}" onclick="savePatientNote('${p.id}')">💾 Guardar nota</button>
+            </div>
+            <textarea id="note-${p.id}" class="patient-note-input" placeholder="Ej: agresivo al tocarle la pata · dueña habla solo español · alérgico a penicilina...">${(p.note||'').replace(/</g,'&lt;')}</textarea>
+          </div>
+
           ${p.phone?`<div style="margin-bottom:.75rem;">
             <button class="btn-sm btn-sm-wa" onclick="openWhatsAppForPatient('${p.id}')">📱 Contactar por WhatsApp</button>
           </div>`:''}
