@@ -300,6 +300,75 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
   vertical-align: middle;
 }
 
+/* ─── MONTH OVERVIEW ────────────── */
+.month-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 0.75rem 1.25rem; margin-bottom: 1rem;
+}
+.month-title { font-size: 18px; font-weight: 700; color: var(--text); text-transform: capitalize; }
+.month-nav-btn {
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text); padding: 6px 14px; border-radius: var(--r-sm);
+  cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.month-nav-btn:hover { background: var(--green-l); border-color: var(--green-b); color: var(--green); }
+
+.heatmap-legend { display: flex; align-items: center; gap: 4px; }
+.legend-label { font-size: 11px; color: var(--text3); margin: 0 4px; }
+
+/* The heatmap itself: 7-column grid (Mon-Sun) */
+.heatmap {
+  display: grid;
+  grid-template-columns: 24px repeat(7, 1fr);
+  gap: 5px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.heat-weekday-header {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  color: var(--text3); text-align: center; padding: 2px 0;
+  letter-spacing: 0.05em;
+}
+.heat-week-label { font-size: 10px; color: var(--text3); text-align: right; padding-right: 4px; align-self: center; }
+.heat-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  position: relative;
+  border: 1px solid transparent;
+  transition: transform 0.1s, border-color 0.1s;
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  padding: 3px 5px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: default;
+  min-width: 14px; min-height: 14px;
+}
+.heat-cell.day { cursor: pointer; }
+.heat-cell.day:hover { transform: scale(1.08); border-color: var(--text2); z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.heat-cell.today { border-color: var(--text); border-width: 2px; }
+.heat-cell.future { opacity: 0.4; cursor: default; }
+.heat-cell.empty { background: transparent; }
+
+/* Heat levels (0 = no activity, 4 = many) */
+.heat-0 { background: #ebede5; color: var(--text3); }
+.heat-1 { background: #c6e8d4; color: #1a5c35; }
+.heat-2 { background: #88c9a4; color: #0f4023; }
+.heat-3 { background: #4a9d6e; color: #fff; }
+.heat-4 { background: #2d6a4f; color: #fff; }
+.heat-cell .day-num { font-size: 9px; opacity: 0.7; position: absolute; top: 3px; left: 5px; }
+.heat-cell .day-count { font-weight: 700; }
+
+/* Selected day */
+.heat-cell.selected { border-color: var(--text); border-width: 2px; box-shadow: 0 0 0 2px rgba(45,106,79,0.3); }
+
+/* Day list (when clicking on a heatmap cell) */
+.day-list-item { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.day-list-item:last-child { border-bottom: none; }
+.day-list-pet { font-weight: 600; font-size: 14px; color: var(--text); }
+.day-list-meta { font-size: 12px; color: var(--text2); }
+.day-list-amount { margin-left: auto; text-align: right; font-weight: 600; font-size: 14px; }
+
 .admin-page { display: none; max-width: 1100px; margin: 0 auto; padding: 1.75rem 1.25rem 4rem; }
 .admin-page.active { display: block; }
 
@@ -412,6 +481,11 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
   .admin-tab { padding: 0 10px; font-size: 12px; }
   .patient-detail-row { grid-template-columns: 1fr; }
   .request-actions { flex-direction: column; }
+  .heatmap { grid-template-columns: 18px repeat(7, 1fr); gap: 3px; }
+  .heat-cell .day-num { font-size: 8px; }
+  .heat-cell .day-count { font-size: 10px; }
+  .month-nav { flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .month-title { font-size: 15px; flex-basis: 100%; text-align: center; order: -1; }
 }
 </style>
 </head>
@@ -664,6 +738,7 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
       <div class="admin-brand">🐾 Anamalitos <span>Panel de control</span></div>
       <div class="admin-nav-tabs">
         <button class="admin-tab active" onclick="showAdminPage('dashboard')" id="atab-dashboard">📊 Resumen</button>
+        <button class="admin-tab" onclick="showAdminPage('mes')" id="atab-mes">📈 Mes</button>
         <button class="admin-tab" onclick="showAdminPage('requests')" id="atab-requests">📅 Solicitudes <span id="requests-badge" style="background:rgba(255,80,80,0.3);color:#ffaaaa;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px;display:none;"></span></button>
         <button class="admin-tab" onclick="showAdminPage('patients')" id="atab-patients">🐾 Pacientes</button>
         <button class="admin-tab" onclick="showAdminPage('reminders')" id="atab-reminders">🔔 Vacunas</button>
@@ -737,6 +812,66 @@ body { background: var(--sand); font-family: 'Segoe UI', system-ui, sans-serif; 
     </div>
 
   </div><!-- /apage-dashboard -->
+
+  <!-- ADMIN PAGE: MES (Monthly overview) -->
+  <div class="admin-page" id="apage-mes">
+
+    <!-- Month navigation -->
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="changeMonth(-1)">‹ Mes anterior</button>
+      <div class="month-title" id="mes-title">—</div>
+      <button class="month-nav-btn" onclick="changeMonth(1)">Mes siguiente ›</button>
+    </div>
+
+    <!-- Stats row for the selected month -->
+    <div class="stats-row" style="margin-bottom:1.25rem;">
+      <div class="stat-card">
+        <div class="stat-icon green">💚</div>
+        <div><div class="stat-value" id="mes-pagado">$0</div><div class="stat-label">Cobrado este mes (MXN)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">⏳</div>
+        <div><div class="stat-value" id="mes-pendiente">$0</div><div class="stat-label">Pendiente este mes (MXN)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">🐾</div>
+        <div><div class="stat-value" id="mes-visitas">0</div><div class="stat-label">Visitas este mes</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">⭐</div>
+        <div><div class="stat-value" id="mes-top" style="font-size:14px;line-height:1.3;">—</div><div class="stat-label">Servicio más frecuente</div></div>
+      </div>
+    </div>
+
+    <!-- Heatmap + legend -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <span class="admin-card-title">🗓 Actividad diaria</span>
+        <div class="heatmap-legend">
+          <span class="legend-label">Menos</span>
+          <span class="heat-cell heat-0"></span>
+          <span class="heat-cell heat-1"></span>
+          <span class="heat-cell heat-2"></span>
+          <span class="heat-cell heat-3"></span>
+          <span class="heat-cell heat-4"></span>
+          <span class="legend-label">Más</span>
+        </div>
+      </div>
+      <div class="admin-card-body" style="padding:1.5rem 1.25rem;">
+        <div class="heatmap" id="mes-heatmap"></div>
+      </div>
+    </div>
+
+    <!-- Day detail -->
+    <div class="admin-card" id="mes-day-detail" style="display:none;">
+      <div class="admin-card-header">
+        <span class="admin-card-title" id="mes-day-title">—</span>
+        <button class="btn-sm btn-sm-gray" onclick="closeDayDetail()">Cerrar ×</button>
+      </div>
+      <div class="admin-card-body" id="mes-day-list"></div>
+    </div>
+
+  </div><!-- /apage-mes -->
 
   <!-- ADMIN PAGE: REQUESTS -->
   <div class="admin-page" id="apage-requests">
@@ -2602,6 +2737,7 @@ async function liveSync(showIndicator=true) {
       else if (id==='requests') renderRequests();
       else if (id==='patients') renderAdminPatients();
       else if (id==='reminders') renderAdminReminders();
+      else if (id==='mes') renderMes();
     }
   } catch(e) {
     console.error('Sync error:', e);
@@ -2642,6 +2778,198 @@ function showAdminPage(id) {
   if (id==='requests') renderRequests();
   if (id==='patients') renderAdminPatients();
   if (id==='reminders') renderAdminReminders();
+  if (id==='mes') renderMes();
+}
+
+// ─── MES (Monthly overview) ─────────────────────────────────────
+// State: which month is being viewed
+let mesViewYear = new Date().getFullYear();
+let mesViewMonth = new Date().getMonth(); // 0-11
+let mesSelectedDay = null;
+
+function changeMonth(delta) {
+  mesViewMonth += delta;
+  if (mesViewMonth > 11) { mesViewMonth = 0; mesViewYear++; }
+  if (mesViewMonth < 0)  { mesViewMonth = 11; mesViewYear--; }
+  mesSelectedDay = null;
+  document.getElementById('mes-day-detail').style.display = 'none';
+  renderMes();
+}
+
+function renderMes() {
+  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('mes-title').textContent = `${monthNames[mesViewMonth]} ${mesViewYear}`;
+
+  // Collect all visits for this month
+  const visitsByDay = {}; // 'YYYY-MM-DD' -> [visits]
+  let totalPagado = 0, totalPendiente = 0, totalVisitas = 0;
+  const serviceCount = {};
+
+  patients.forEach(p => {
+    (p.visits||[]).forEach(v => {
+      const iso = parseSheetDate(v.date);
+      if (!iso) return;
+      const d = new Date(iso);
+      if (d.getFullYear() !== mesViewYear || d.getMonth() !== mesViewMonth) return;
+
+      const key = iso;
+      if (!visitsByDay[key]) visitsByDay[key] = [];
+      visitsByDay[key].push({
+        ...v,
+        owner: p.owner,
+        petname: p.petname,
+        species: p.species,
+        phone: p.phone,
+        patientId: p.id,
+      });
+
+      totalVisitas++;
+      const amt = parseFloat(v.total) || 0;
+      if ((v.status||'').toLowerCase().includes('pagado')) totalPagado += amt;
+      else if ((v.status||'').toLowerCase().includes('pendiente')) totalPendiente += amt;
+
+      // Service counting
+      (v.services||'').split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{
+        serviceCount[s] = (serviceCount[s]||0) + 1;
+      });
+    });
+  });
+
+  document.getElementById('mes-pagado').textContent = '$' + totalPagado.toLocaleString('es-MX',{maximumFractionDigits:0});
+  document.getElementById('mes-pendiente').textContent = '$' + totalPendiente.toLocaleString('es-MX',{maximumFractionDigits:0});
+  document.getElementById('mes-visitas').textContent = totalVisitas;
+
+  // Top service
+  const sortedServices = Object.entries(serviceCount).sort((a,b)=>b[1]-a[1]);
+  if (sortedServices.length) {
+    const [name, count] = sortedServices[0];
+    document.getElementById('mes-top').textContent = `${name} (${count}×)`;
+  } else {
+    document.getElementById('mes-top').textContent = '—';
+  }
+
+  // Build the heatmap
+  buildHeatmap(visitsByDay);
+}
+
+function buildHeatmap(visitsByDay) {
+  const heatmap = document.getElementById('mes-heatmap');
+  heatmap.innerHTML = '';
+
+  // Header row: empty cell + weekday names
+  const weekdays = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  heatmap.innerHTML += '<div></div>';
+  weekdays.forEach(d => {
+    heatmap.innerHTML += `<div class="heat-weekday-header">${d}</div>`;
+  });
+
+  // First day of month (Mon=0, ..., Sun=6)
+  const firstDay = new Date(mesViewYear, mesViewMonth, 1);
+  let startOffset = firstDay.getDay() - 1; // JS: Sun=0; we want Mon=0
+  if (startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(mesViewYear, mesViewMonth + 1, 0).getDate();
+
+  // Determine max count for scaling
+  let maxCount = 0;
+  Object.values(visitsByDay).forEach(v => { if (v.length > maxCount) maxCount = v.length; });
+
+  // Today comparison
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Render weeks
+  let dayCounter = 1;
+  let weekIdx = 0;
+  const totalCells = startOffset + daysInMonth;
+  const totalWeeks = Math.ceil(totalCells / 7);
+
+  for (let w = 0; w < totalWeeks; w++) {
+    // Week label (just an empty spacer for now to keep the grid aligned)
+    heatmap.innerHTML += `<div class="heat-week-label">${w+1}</div>`;
+    for (let d = 0; d < 7; d++) {
+      const cellIdx = w * 7 + d;
+      if (cellIdx < startOffset || dayCounter > daysInMonth) {
+        heatmap.innerHTML += '<div class="heat-cell empty"></div>';
+      } else {
+        const dateIso = `${mesViewYear}-${String(mesViewMonth+1).padStart(2,'0')}-${String(dayCounter).padStart(2,'0')}`;
+        const dayVisits = visitsByDay[dateIso] || [];
+        const count = dayVisits.length;
+        // Heat level 0-4
+        let level = 0;
+        if (maxCount > 0) {
+          if (count === 0) level = 0;
+          else if (count <= 1) level = 1;
+          else if (count <= 2) level = 2;
+          else if (count <= 4) level = 3;
+          else level = 4;
+        }
+        const cellDate = new Date(mesViewYear, mesViewMonth, dayCounter);
+        cellDate.setHours(0,0,0,0);
+        const isToday = cellDate.getTime() === today.getTime();
+        const isFuture = cellDate > today;
+        const isSelected = dateIso === mesSelectedDay;
+        let cls = `heat-cell heat-${level}`;
+        if (count > 0 || !isFuture) cls += ' day';
+        if (isToday) cls += ' today';
+        if (isFuture && count === 0) cls += ' future';
+        if (isSelected) cls += ' selected';
+        const title = count > 0
+          ? `${dayCounter} – ${count} visita${count!==1?'s':''}`
+          : `${dayCounter} – sin actividad`;
+        heatmap.innerHTML += `<div class="${cls}" title="${title}" onclick="${count>0?`selectDay('${dateIso}')`:''}">
+          <span class="day-num">${dayCounter}</span>
+          ${count>0?`<span class="day-count">${count}</span>`:''}
+        </div>`;
+        dayCounter++;
+      }
+    }
+  }
+
+  // Refresh selected day list if any
+  if (mesSelectedDay && visitsByDay[mesSelectedDay]) {
+    renderDayList(mesSelectedDay, visitsByDay[mesSelectedDay]);
+  }
+}
+
+function selectDay(dateIso) {
+  mesSelectedDay = dateIso;
+  renderMes();
+}
+
+function closeDayDetail() {
+  mesSelectedDay = null;
+  document.getElementById('mes-day-detail').style.display = 'none';
+  renderMes();
+}
+
+function renderDayList(dateIso, visits) {
+  const panel = document.getElementById('mes-day-detail');
+  const title = document.getElementById('mes-day-title');
+  const list = document.getElementById('mes-day-list');
+  panel.style.display = 'block';
+  const d = new Date(dateIso);
+  const dayStr = d.toLocaleDateString('es-MX',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  title.textContent = `🗓 ${dayStr} – ${visits.length} visita${visits.length!==1?'s':''}`;
+
+  let dayTotal = 0;
+  list.innerHTML = visits.map(v => {
+    const amt = parseFloat(v.total)||0;
+    dayTotal += amt;
+    return `<div class="day-list-item">
+      <div style="font-size:20px;">${(v.species||'🐾').split(' ')[0]}</div>
+      <div style="flex:1;">
+        <div class="day-list-pet">${v.petname} <span style="color:var(--text2);font-weight:400;font-size:12px;">· ${v.owner}</span></div>
+        <div class="day-list-meta">${v.services || '<em>Sin servicios</em>'}${v.symptoms?' · 🩺 '+v.symptoms:''}</div>
+      </div>
+      <div class="day-list-amount">${amt>0?'$'+amt.toLocaleString('es-MX'):'—'}<br>${statusPill(v.status)}</div>
+    </div>`;
+  }).join('');
+
+  if (visits.length > 1) {
+    list.innerHTML += `<div class="day-list-item" style="background:var(--sand);font-weight:700;">
+      <div style="flex:1;text-align:right;">Total del día:</div>
+      <div class="day-list-amount" style="font-size:16px;color:var(--green);">$${dayTotal.toLocaleString('es-MX')}</div>
+    </div>`;
+  }
 }
 
 function updateStats() {
