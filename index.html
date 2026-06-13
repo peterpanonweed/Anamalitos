@@ -142,26 +142,23 @@ body{font-family:var(--body); color:var(--ink); background:var(--cream); overflo
   font-size:26px; text-decoration:none; animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,9px)}}
 
-/* ───────── MANIFESTO (collage backdrop + frosted line) ───────── */
-.manifesto{background:var(--turquoise-d); color:var(--cream); text-align:center;
-  min-height:clamp(440px,52vw,640px); display:flex; align-items:center; justify-content:center;
-  padding:clamp(72px,11vw,130px) 24px; position:relative; overflow:hidden}
-/* the cohesive collage = the whole picture */
-.manifesto::before{content:""; position:absolute; inset:0; z-index:0;
-  background:var(--mf-art-img) center 38%/cover no-repeat}
-/* light overall scrim so the warm art doesn't blow out, edges stay rich */
-.manifesto::after{content:""; position:absolute; inset:0; z-index:1;
-  background:radial-gradient(58% 64% at 50% 50%, rgba(23,59,66,.18), rgba(23,59,66,.52) 100%)}
-/* frosted glass lozenge under the line — the "teilweise blur" */
-.mf-panel{position:relative; z-index:2; max-width:min(92vw,600px); margin:0 auto;
-  padding:clamp(30px,4.4vw,52px) clamp(28px,4.6vw,62px);
-  background:rgba(20,52,58,.40);
-  -webkit-backdrop-filter:blur(12px) saturate(1.1); backdrop-filter:blur(12px) saturate(1.1);
-  border:1px solid rgba(245,236,217,.20); border-radius:28px;
-  box-shadow:0 36px 80px -34px rgba(8,26,30,.85), inset 0 1px 0 rgba(255,255,255,.08)}
-.manifesto p{font-family:var(--display); font-weight:500; font-size:clamp(30px,5.2vw,62px); line-height:1.12;
-  max-width:16ch; margin:0 auto; letter-spacing:-.01em; text-shadow:0 2px 20px rgba(8,26,30,.55), 0 1px 2px rgba(8,26,30,.5)}
+/* ───────── MANIFESTO (framed collage on brand — hero sibling) ───────── */
+.manifesto{background:linear-gradient(180deg,#2f7f8c 0%,#3c8f99 55%,#4d9aa3 100%); color:#fff; text-align:center;
+  padding:clamp(64px,10vw,120px) 24px; position:relative; overflow:hidden}
+/* soft sun glow behind the framed art (echoes the hero sun) */
+.manifesto::before{content:""; position:absolute; left:50%; top:60%; transform:translate(-50%,-50%);
+  width:min(118%,860px); aspect-ratio:1; border-radius:50%; z-index:0;
+  background:radial-gradient(circle,#ffbf6b 0%,rgba(232,137,58,.5) 36%,rgba(232,137,58,.12) 56%,transparent 70%)}
+.mf-inner{position:relative; z-index:2; max-width:880px; margin:0 auto}
+.manifesto p{font-family:var(--display); font-weight:600; font-size:clamp(28px,5vw,56px); line-height:1.1;
+  max-width:18ch; margin:0 auto clamp(30px,5vw,46px); letter-spacing:-.01em; color:#fff;
+  text-shadow:0 3px 18px rgba(15,40,45,.32)}
 .manifesto em{font-style:normal; color:var(--orange)}
+/* framed collage banner — same frame as the hero mural */
+.mf-frame{width:min(100%,720px); aspect-ratio:1.9/1; margin:0 auto; border-radius:26px;
+  background:var(--mf-art-img) center/cover no-repeat;
+  border:9px solid var(--paper);
+  box-shadow:0 40px 80px -30px rgba(10,30,34,.6), 0 0 0 1px rgba(10,30,34,.08)}
 
 /* clínica / Anna */
 .brand-tld{color:var(--orange)}
@@ -222,10 +219,8 @@ footer .tld{color:var(--orange)}
   .anna-text p{margin:0 auto 18px}
   .chips{justify-content:center}
   .serv-grid{grid-template-columns:1fr 1fr}
-  .manifesto{min-height:clamp(380px,70vw,520px)}
 }
 @media (max-width:520px){ .serv-grid{grid-template-columns:1fr}
-  .mf-panel{max-width:none; border-radius:22px}
 }
 :focus-visible{outline:3px solid var(--yolk); outline-offset:3px; border-radius:8px}
 @media (prefers-reduced-motion:reduce){
@@ -260,7 +255,7 @@ footer .tld{color:var(--orange)}
       <h1 class="wordmark">anamalitos<span class="tld">.mx</span></h1>
       <p class="tagline" data-i18n="tagline">Cuidamos a tu manada como si fuera la nuestra.</p>
       <div class="cta">
-        <a class="btn btn-sol" href="app.html"><span data-i18n="cta_book">Agendar cita</span> <span aria-hidden="true">→</span></a>
+        <a class="btn btn-sol" href="app/"><span data-i18n="cta_book">Agendar cita</span> <span aria-hidden="true">→</span></a>
         <a class="btn btn-ghost" href="#clinica" data-i18n="cta_about">Conoce la clínica</a>
       </div>
     </div>
@@ -289,8 +284,9 @@ footer .tld{color:var(--orange)}
 </section>
 
 <section class="manifesto" id="manifesto">
-  <div class="mf-panel reveal">
+  <div class="mf-inner reveal">
     <p data-i18n-html="manifesto">Aquí, cada <em>cola</em>, <em>pluma</em> y <em>bigote</em> importa.</p>
+    <div class="mf-frame" role="img" aria-label="Collage: paisaje mexicano con sol, magueyes y animales"></div>
   </div>
 </section>
 
@@ -331,12 +327,12 @@ footer .tld{color:var(--orange)}
   </div>
   <h2 class="reveal" data-i18n="final_h">¿List@ para una visita?</h2>
   <p class="reveal" data-i18n="final_p">Agenda en línea en segundos. Te confirmamos por WhatsApp.</p>
-  <a class="btn btn-sol reveal" href="app.html"><span data-i18n="final_btn">Agendar cita en línea</span> <span aria-hidden="true">→</span></a>
+  <a class="btn btn-sol reveal" href="app/"><span data-i18n="final_btn">Agendar cita en línea</span> <span aria-hidden="true">→</span></a>
 </section>
 
 <footer>
   <div class="fb">anamalitos<span class="tld">.mx</span></div>
-  <div><span data-i18n="foot_line">Clínica veterinaria · Huixquilucan, CDMX</span> &nbsp;·&nbsp; <a href="tel:+525540684608">55 4068 4608</a> &nbsp;·&nbsp; <a href="app.html" data-i18n="foot_book">Agendar cita</a></div>
+  <div><span data-i18n="foot_line">Clínica veterinaria · Huixquilucan, CDMX</span> &nbsp;·&nbsp; <a href="tel:+525540684608">55 4068 4608</a> &nbsp;·&nbsp; <a href="app/" data-i18n="foot_book">Agendar cita</a></div>
   <div style="margin-top:10px; opacity:.75"><span data-i18n="foot_made">Hecho con cariño de</span> <a href="https://peterpanonweed.github.io/adamdev/" target="_blank" rel="noopener" style="font-weight:600">adamdev</a> 🐾</div>
 </footer>
 
