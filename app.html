@@ -4,11 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>anamalitos.mx – Clínica Veterinaria CDMX</title>
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,14 +92,6 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
 .lang-btn.active, .lang-btn:hover { background: rgba(255,255,255,0.25); }
 .admin-link { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); padding: 5px 12px; border-radius: var(--r-sm); cursor: pointer; font-size: 11px; transition: all 0.15s; }
 .admin-link:hover { background: rgba(255,255,255,0.2); color: #fff; }
-.top-bar-left { display: flex; align-items: center; gap: 6px; }
-.back-site { display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
-  color: rgba(255,255,255,0.9); font-family: var(--display); font-weight: 600; font-size: 14px;
-  padding: 6px 12px 6px 9px; border-radius: 99px; transition: background 0.15s; white-space: nowrap; }
-.back-site:hover { background: rgba(255,255,255,0.16); color: #fff; }
-.back-site .bs-arrow { font-size: 17px; line-height: 1; }
-.back-site .brand-tld { color: var(--orange); }
-@media (max-width: 640px) { .back-site .bs-label { display: none; } .back-site { padding: 6px 9px; } }
 
 /* ══════════════════════════════
    PAGES (customer)
@@ -173,17 +160,6 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
 .hero--mural .hero-text h1 { color: #fff; font-size: 38px; text-shadow: 0 1px 12px rgba(0,0,0,.28); }
 .hero--mural .hero-text h1 .brand-tld { color: var(--orange); }
 .hero--mural .hero-text p { color: rgba(255,255,255,.92); max-width: 40em; }
-/* clickable hero → back to landing */
-.hero-home { display: block; text-decoration: none; color: inherit; cursor: pointer; position: relative; }
-.hero-home .hero--mural { transition: filter .18s ease; }
-.hero-home:hover .hero--mural { filter: brightness(1.05); }
-.hero-hint {
-  position: absolute; top: 12px; left: 12px; z-index: 5;
-  background: rgba(23,59,66,.55); color: #fff; font-family: var(--mono); font-size: 11px;
-  letter-spacing: .04em; padding: 5px 11px; border-radius: 99px; opacity: 0; transition: opacity .18s;
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); pointer-events: none;
-}
-.hero-home:hover .hero-hint { opacity: 1; }
 
 /* ── Footer: ¿Dónde estamos? (Etappe 3) ── */
 .visit-footer {
@@ -217,10 +193,6 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
 .visit-btn.is-call:hover { background: var(--turquoise-l); }
 .visit-btn.is-wa { background: #25a567; color: #fff; box-shadow: 0 10px 22px -12px rgba(37,165,103,.8); }
 .visit-btn.is-wa:hover { background: #1f8f59; }
-.visit-btn.is-ig { background: linear-gradient(135deg,#feda77 0%,#f58529 24%,#dd2a7b 60%,#8134af 92%); color: #fff; box-shadow: 0 10px 22px -12px rgba(135,52,175,.85); }
-.visit-btn.is-ig:hover { filter: brightness(1.06); }
-.visit-btn .vb-ig { display: inline-flex; }
-.visit-btn .vb-ig svg { width: 18px; height: 18px; display: block; shape-rendering: geometricPrecision; }
 
 @media (max-width: 600px) {
   .hero-text { padding: 1.6rem; }
@@ -694,6 +666,113 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
   .month-nav { flex-wrap: wrap; gap: 8px; justify-content: center; }
   .month-title { font-size: 15px; flex-basis: 100%; text-align: center; order: -1; }
 }
+/* ══════════════════════════════
+   AGENDA / CALENDAR
+══════════════════════════════ */
+.agenda-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem; align-items: start; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cal-dow { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text3); text-align: center; padding: 2px 0; letter-spacing: 0.05em; }
+.cal-cell {
+  aspect-ratio: 1 / 1; border-radius: var(--r-sm); border: 1px solid var(--border);
+  background: var(--surface); display: flex; flex-direction: column; align-items: flex-start;
+  padding: 4px 6px; font-size: 12px; color: var(--text2); cursor: pointer; position: relative;
+  transition: border-color .12s, background .12s; overflow: hidden;
+}
+.cal-cell:hover { border-color: var(--green-b); background: var(--green-l); }
+.cal-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+.cal-cell.today { border-color: var(--green); border-width: 2px; }
+.cal-cell.selected { background: var(--green-l); border-color: var(--green); box-shadow: 0 0 0 2px rgba(46,125,138,0.15); }
+.cal-cell.past { opacity: 0.55; }
+.cal-daynum { font-weight: 700; color: var(--text); }
+.cal-count { margin-top: auto; align-self: stretch; }
+.cal-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin: 1px; }
+.cal-badge { background: var(--green); color: #fff; font-size: 10px; font-weight: 700; padding: 0 6px; border-radius: 99px; }
+.cal-badge.urgent { background: var(--red); }
+
+.appt-item {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--surface); margin-bottom: 8px;
+}
+.appt-item.done { opacity: 0.5; }
+.appt-time { font-weight: 800; color: var(--green); font-size: 14px; white-space: nowrap; min-width: 48px; }
+.appt-body { flex: 1; min-width: 0; }
+.appt-pet { font-weight: 700; color: var(--text); }
+.appt-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.appt-actions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.appt-daygroup-title { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: capitalize; margin: 14px 0 8px; }
+
+.agenda-banner {
+  background: var(--amber-bg); border: 1px solid var(--amber-b); color: var(--amber);
+  border-radius: var(--r); padding: 10px 16px; margin-bottom: 1rem; font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+
+/* ── Appointment modal ── */
+.appt-modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(23,59,66,0.55);
+  z-index: 500; align-items: center; justify-content: center; padding: 1rem;
+}
+.appt-modal-overlay.open { display: flex; }
+.appt-modal {
+  background: var(--paper); border-radius: var(--r); padding: 1.5rem; width: 100%; max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.appt-modal-title { font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.appt-modal-for { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+.appt-field { display: block; margin-bottom: 12px; }
+.appt-field span { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 4px; }
+.appt-field input {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border2); border-radius: var(--r-sm);
+  font-size: 15px; font-family: var(--body); background: #fff; color: var(--text);
+}
+.appt-field input:focus { outline: none; border-color: var(--green); }
+.appt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.appt-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; flex-wrap: wrap; }
+
+/* ══════════════════════════════
+   MOBILE RESPONSIVE
+══════════════════════════════ */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+@media (max-width: 820px) {
+  .agenda-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 680px) {
+  /* Customer header: let nav scroll, allow wrap */
+  .top-bar { flex-wrap: wrap; padding: 0 12px; gap: 6px; }
+  .nav-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+  .nav-tab { padding: 12px 14px; flex: 0 0 auto; white-space: nowrap; }
+  .top-bar-right { gap: 8px; }
+
+  /* Admin header: stack + horizontally scrollable tabs */
+  .admin-topbar { height: auto; flex-direction: column; align-items: stretch; padding: 8px 12px; gap: 8px; }
+  .admin-topbar-left { flex-direction: column; align-items: stretch; gap: 8px; width: 100%; }
+  .admin-brand { font-size: 15px; }
+  .admin-nav-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+  .admin-tab { height: 44px; padding: 0 14px; flex: 0 0 auto; white-space: nowrap; border-bottom-width: 3px; }
+  .admin-topbar-right { width: 100%; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
+  .admin-badge { display: none; }
+
+  /* Pages and grids */
+  .page { padding: 1.25rem 0.85rem 4rem; }
+  .admin-page { padding: 0.85rem; }
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 12px; }
+  .form-grid { grid-template-columns: 1fr !important; }
+  .agenda-grid { grid-template-columns: 1fr; }
+  .cal-cell { padding: 3px 4px; font-size: 11px; }
+  .cal-badge { padding: 0 5px; }
+  .appt-row { grid-template-columns: 1fr; }
+  .admin-table { font-size: 12px; }
+  .admin-search { flex-wrap: wrap; }
+}
+
+@media (max-width: 420px) {
+  .stats-row { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -704,12 +783,9 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
 <div class="screen active" id="screen-customer">
 
   <div class="top-bar">
-    <div class="top-bar-left">
-    <a class="back-site" href="index.html" aria-label="Volver a anamalitos.mx"><span class="bs-arrow">←</span><span class="bs-label">anamalitos<span class="brand-tld">.mx</span></span></a>
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('registro')" id="tab-registro">📋 <span data-t="tab1">Registro</span></button>
       <button class="nav-tab" onclick="showPage('citas')" id="tab-citas">📅 <span data-t="tab2">Cita</span></button>
-    </div>
     </div>
     <div class="top-bar-right">
       <div class="lang-btns">
@@ -722,8 +798,6 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
 
   <!-- PAGE: REGISTRO -->
   <div class="page active" id="page-registro">
-    <a href="index.html" class="hero-home" aria-label="Volver a anamalitos.mx">
-    <span class="hero-hint" data-t="back_site_hint">← Volver al sitio</span>
     <div class="hero hero--mural" role="img" aria-label="El equipo de anamalitos.mx: un pug con bata de veterinario, una guacamaya y un gato">
       <div class="hero-text">
         <div class="hero-tag">Clínica veterinaria · Ciudad de México</div>
@@ -731,7 +805,6 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
         <p data-t="hero-sub">Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.</p>
       </div>
     </div>
-    </a>
 
     <div class="progress-wrap">
       <div class="progress-labels">
@@ -847,9 +920,6 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
         <a class="visit-btn is-wa" target="_blank" rel="noopener"
            href="https://wa.me/525540684608?text=Hola%2C%20quiero%20agendar%20una%20cita%20para%20mi%20mascota%20%F0%9F%90%BE">
           <span class="vb-ico">📱</span><span data-t="foot_wa">WhatsApp</span>
-        </a>
-        <a class="visit-btn is-ig" target="_blank" rel="noopener" href="https://instagram.com/esteriliza.mx">
-          <span class="vb-ico vb-ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.4"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.05" fill="currentColor" stroke="none"/></svg></span><span>Instagram</span>
         </a>
       </div>
     </footer>
@@ -968,126 +1038,121 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
 
   <div class="admin-topbar">
     <div class="admin-topbar-left">
-      <div class="admin-brand">🐾 anamalitos<span class="brand-tld">.mx</span> <span>Panel de control</span></div>
+      <div class="admin-brand">🐾 anamalitos<span class="brand-tld">.mx</span> <span data-ta="a_brand_sub">Panel de control</span></div>
       <div class="admin-nav-tabs">
-        <button class="admin-tab active" onclick="showAdminPage('dashboard')" id="atab-dashboard">📊 Resumen</button>
-        <button class="admin-tab" onclick="showAdminPage('mes')" id="atab-mes">📈 Mes</button>
-        <button class="admin-tab" onclick="showAdminPage('requests')" id="atab-requests">📅 Solicitudes <span id="requests-badge" style="background:rgba(255,80,80,0.3);color:#ffaaaa;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px;display:none;"></span></button>
-        <button class="admin-tab" onclick="showAdminPage('patients')" id="atab-patients">🐾 Pacientes</button>
-        <button class="admin-tab" onclick="showAdminPage('reminders')" id="atab-reminders">🔔 Vacunas</button>
+        <button class="admin-tab active" onclick="showAdminPage('agenda')" id="atab-agenda">📅 <span data-ta="a_tab_agenda">Agenda</span></button>
+        <button class="admin-tab" onclick="showAdminPage('requests')" id="atab-requests">📋 <span data-ta="a_tab_citas">Citas</span> <span id="requests-badge" style="background:rgba(255,80,80,0.3);color:#ffaaaa;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px;display:none;"></span></button>
+        <button class="admin-tab" onclick="showAdminPage('patients')" id="atab-patients">🐾 <span data-ta="a_tab_patients">Pacientes</span></button>
+        <button class="admin-tab" onclick="showAdminPage('mes')" id="atab-mes">📈 <span data-ta="a_tab_mes">Mes</span></button>
+        <button class="admin-tab" onclick="showAdminPage('reminders')" id="atab-reminders">🔔 <span data-ta="a_tab_vacunas">Vacunas</span></button>
       </div>
     </div>
     <div class="admin-topbar-right">
+      <div class="lang-btns" style="margin-right:4px;">
+        <button class="lang-btn active" onclick="setLang('es')" id="abtn-es">🇲🇽 ES</button>
+        <button class="lang-btn" onclick="setLang('en')" id="abtn-en">🇬🇧 EN</button>
+      </div>
       <span class="sync-indicator ok" id="syncIndicator">⏳ Iniciando...</span>
       <span class="admin-badge" id="adminDateBadge"></span>
-      <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+      <button class="btn-logout" onclick="doLogout()" data-ta="a_logout">Cerrar sesión</button>
     </div>
   </div>
 
-  <!-- ADMIN PAGE: DASHBOARD -->
-  <div class="admin-page active" id="apage-dashboard">
+  <!-- ADMIN PAGE: AGENDA (calendar — the heart of the app) -->
+  <div class="admin-page active" id="apage-agenda">
 
     <div class="stats-row" id="statsRow">
       <div class="stat-card">
         <div class="stat-icon green">🐾</div>
-        <div><div class="stat-value" id="stat-patients">—</div><div class="stat-label">Pacientes registrados</div></div>
+        <div><div class="stat-value" id="stat-patients">—</div><div class="stat-label" data-ta="a_stat_patients">Pacientes registrados</div></div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon blue">📅</div>
-        <div><div class="stat-value" id="stat-requests">—</div><div class="stat-label">Solicitudes pendientes</div></div>
+        <div class="stat-icon blue">📋</div>
+        <div><div class="stat-value" id="stat-requests">—</div><div class="stat-label" data-ta="a_stat_requests">Solicitudes sin agendar</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon amber">💰</div>
-        <div><div class="stat-value" id="stat-pendiente">—</div><div class="stat-label">Pagos pendientes (MXN)</div></div>
+        <div><div class="stat-value" id="stat-pendiente">—</div><div class="stat-label" data-ta="a_stat_pending_mxn">Pagos pendientes (MXN)</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon red">🚨</div>
-        <div><div class="stat-value" id="stat-overdue">—</div><div class="stat-label">Visitas con pago abierto</div></div>
+        <div><div class="stat-value" id="stat-overdue">—</div><div class="stat-label" data-ta="a_stat_open_visits">Visitas con pago abierto</div></div>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div id="agenda-unscheduled"></div>
 
-      <!-- Pending requests preview -->
+    <div class="agenda-grid">
+      <!-- Calendar -->
       <div class="admin-card">
         <div class="admin-card-header">
-          <span class="admin-card-title">📅 Solicitudes de cita pendientes</span>
-          <button class="btn-sm btn-sm-green" onclick="showAdminPage('requests')">Ver todas</button>
+          <span class="admin-card-title">📅 <span data-ta="a_agenda_title">Calendario de citas</span></span>
+          <button class="btn-sm btn-sm-green" onclick="openApptModal()"><span data-ta="a_add_appt">➕ Nueva cita</span></button>
         </div>
-        <div class="admin-card-body" id="dash-requests-preview"></div>
+        <div class="admin-card-body">
+          <div class="month-nav">
+            <button class="month-nav-btn" onclick="changeAgendaMonth(-1)">‹</button>
+            <span class="month-title" id="agenda-month-title"></span>
+            <button class="month-nav-btn" onclick="changeAgendaMonth(1)">›</button>
+          </div>
+          <div id="agenda-calendar"></div>
+          <div id="agenda-day-detail"></div>
+        </div>
       </div>
 
-      <!-- Outstanding payments preview -->
+      <!-- Upcoming appointments -->
       <div class="admin-card">
         <div class="admin-card-header">
-          <span class="admin-card-title">💰 Pagos pendientes</span>
-          <button class="btn-sm btn-sm-green" onclick="showAdminPage('patients')">Ver todos</button>
+          <span class="admin-card-title">⏰ <span data-ta="a_upcoming">Próximas citas</span></span>
         </div>
-        <div class="admin-card-body" id="dash-payments-preview"></div>
-      </div>
-
-    </div>
-
-    <!-- Recent patients -->
-    <div class="admin-card" style="margin-top:1rem;">
-      <div class="admin-card-header">
-        <span class="admin-card-title">🐾 Pacientes recientes</span>
-        <button class="btn-sm btn-sm-green" onclick="showAdminPage('patients')">Ver todos</button>
-      </div>
-      <div class="admin-card-body">
-        <table class="admin-table" id="dash-patients-table">
-          <thead><tr>
-            <th>Mascota</th><th>Especie</th><th>Dueño</th><th>Teléfono</th><th>Último servicio</th>
-          </tr></thead>
-          <tbody id="dash-patients-body"></tbody>
-        </table>
+        <div class="admin-card-body" id="agenda-upcoming"></div>
       </div>
     </div>
 
-  </div><!-- /apage-dashboard -->
+  </div><!-- /apage-agenda -->
 
   <!-- ADMIN PAGE: MES (Monthly overview) -->
   <div class="admin-page" id="apage-mes">
 
     <!-- Month navigation -->
     <div class="month-nav">
-      <button class="month-nav-btn" onclick="changeMonth(-1)">‹ Mes anterior</button>
+      <button class="month-nav-btn" onclick="changeMonth(-1)" data-ta="a_mes_prev">‹ Mes anterior</button>
       <div class="month-title" id="mes-title">—</div>
-      <button class="month-nav-btn" onclick="changeMonth(1)">Mes siguiente ›</button>
+      <button class="month-nav-btn" onclick="changeMonth(1)" data-ta="a_mes_next">Mes siguiente ›</button>
     </div>
 
     <!-- Stats row for the selected month -->
     <div class="stats-row" style="margin-bottom:1.25rem;">
       <div class="stat-card">
         <div class="stat-icon green">💚</div>
-        <div><div class="stat-value" id="mes-pagado">$0</div><div class="stat-label">Cobrado este mes (MXN)</div></div>
+        <div><div class="stat-value" id="mes-pagado">$0</div><div class="stat-label" data-ta="a_mes_collected">Cobrado este mes (MXN)</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon amber">⏳</div>
-        <div><div class="stat-value" id="mes-pendiente">$0</div><div class="stat-label">Pendiente este mes (MXN)</div></div>
+        <div><div class="stat-value" id="mes-pendiente">$0</div><div class="stat-label" data-ta="a_mes_pending_m">Pendiente este mes (MXN)</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon blue">🐾</div>
-        <div><div class="stat-value" id="mes-visitas">0</div><div class="stat-label">Visitas este mes</div></div>
+        <div><div class="stat-value" id="mes-visitas">0</div><div class="stat-label" data-ta="a_mes_visits">Visitas este mes</div></div>
       </div>
       <div class="stat-card">
         <div class="stat-icon green">⭐</div>
-        <div><div class="stat-value" id="mes-top" style="font-size:14px;line-height:1.3;">—</div><div class="stat-label">Servicio más frecuente</div></div>
+        <div><div class="stat-value" id="mes-top" style="font-size:14px;line-height:1.3;">—</div><div class="stat-label" data-ta="a_mes_top">Servicio más frecuente</div></div>
       </div>
     </div>
 
     <!-- Heatmap + legend -->
     <div class="admin-card">
       <div class="admin-card-header">
-        <span class="admin-card-title">🗓 Actividad diaria</span>
+        <span class="admin-card-title" data-ta="a_mes_activity">🗓 Actividad diaria</span>
         <div class="heatmap-legend">
-          <span class="legend-label">Menos</span>
+          <span class="legend-label" data-ta="a_less">Menos</span>
           <span class="heat-cell heat-0"></span>
           <span class="heat-cell heat-1"></span>
           <span class="heat-cell heat-2"></span>
           <span class="heat-cell heat-3"></span>
           <span class="heat-cell heat-4"></span>
-          <span class="legend-label">Más</span>
+          <span class="legend-label" data-ta="a_more">Más</span>
         </div>
       </div>
       <div class="admin-card-body" style="padding:1.5rem 1.25rem;">
@@ -1099,7 +1164,7 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
     <div class="admin-card" id="mes-day-detail" style="display:none;">
       <div class="admin-card-header">
         <span class="admin-card-title" id="mes-day-title">—</span>
-        <button class="btn-sm btn-sm-gray" onclick="closeDayDetail()">Cerrar ×</button>
+        <button class="btn-sm btn-sm-gray" onclick="closeDayDetail()" data-ta="a_close">Cerrar ×</button>
       </div>
       <div class="admin-card-body" id="mes-day-list"></div>
     </div>
@@ -1110,7 +1175,7 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
   <div class="admin-page" id="apage-requests">
     <div class="admin-card">
       <div class="admin-card-header">
-        <span class="admin-card-title">📅 Todas las solicitudes de cita</span>
+        <span class="admin-card-title">📋 <span data-ta="a_citas_title">Solicitudes de cita</span></span>
         <span class="pill pill-gray" id="requests-count-label">0 pendientes</span>
       </div>
       <div class="admin-card-body" id="requests-list"></div>
@@ -1121,14 +1186,14 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
   <div class="admin-page" id="apage-patients">
     <div class="admin-card">
       <div class="admin-card-header">
-        <span class="admin-card-title">🐾 Pacientes registrados</span>
+        <span class="admin-card-title">🐾 <span data-ta="a_patients_title">Pacientes registrados</span></span>
         <span class="pill pill-green" id="patients-count-label">0 pacientes</span>
       </div>
       <div class="admin-search">
-        <input type="text" id="adminSearch" placeholder="Buscar por nombre, mascota, especie o teléfono..." oninput="renderAdminPatients()" />
-        <button class="btn-sm btn-sm-gray filter-btn active" id="filter-all" onclick="setPatientFilter('all')">Todos</button>
-        <button class="btn-sm btn-sm-gray filter-btn" id="filter-pendiente" onclick="setPatientFilter('pendiente')">⏳ Con pagos pendientes</button>
-        <button class="btn-sm btn-sm-gray filter-btn" id="filter-pagado" onclick="setPatientFilter('pagado')">✓ Pagado</button>
+        <input type="text" id="adminSearch" data-ta-ph="a_search_ph" placeholder="Buscar por nombre, mascota, especie o teléfono..." oninput="renderAdminPatients()" />
+        <button class="btn-sm btn-sm-gray filter-btn active" id="filter-all" onclick="setPatientFilter('all')"><span data-ta="a_filter_all">Todos</span></button>
+        <button class="btn-sm btn-sm-gray filter-btn" id="filter-pendiente" onclick="setPatientFilter('pendiente')"><span data-ta="a_filter_pending">⏳ Con pagos pendientes</span></button>
+        <button class="btn-sm btn-sm-gray filter-btn" id="filter-pagado" onclick="setPatientFilter('pagado')"><span data-ta="a_filter_paid">✓ Pagado</span></button>
       </div>
       <div class="admin-card-body" id="admin-patients-list"></div>
     </div>
@@ -1138,9 +1203,36 @@ h1, h2, h3, .section-title, .login-title, .admin-brand, .invoice-title, .hero-te
   <div class="admin-page" id="apage-reminders">
     <div class="admin-card">
       <div class="admin-card-header">
-        <span class="admin-card-title">💉 Control de vacunas</span>
+        <span class="admin-card-title">💉 <span data-ta="a_vacunas_title">Control de vacunas</span></span>
       </div>
       <div class="admin-card-body" id="admin-reminders-list"></div>
+    </div>
+  </div>
+
+  <!-- APPOINTMENT MODAL (schedule / edit) -->
+  <div class="appt-modal-overlay" id="apptModalOverlay" onclick="if(event.target===this)closeApptModal()">
+    <div class="appt-modal">
+      <div class="appt-modal-title" id="apptModalTitle">📅 Agendar cita</div>
+      <div id="apptModalFor" class="appt-modal-for"></div>
+      <label class="appt-field"><span data-ta="a_confirm_for">Cita para</span>
+        <input type="text" id="apptName" placeholder="Nombre / Mascota" />
+      </label>
+      <div class="appt-row">
+        <label class="appt-field"><span data-ta="a_confirm_date">Fecha</span>
+          <input type="date" id="apptDate" />
+        </label>
+        <label class="appt-field"><span data-ta="a_confirm_time">Hora</span>
+          <input type="time" id="apptTime" value="10:00" />
+        </label>
+      </div>
+      <label class="appt-field"><span data-ta="a_confirm_note">Nota (opcional)</span>
+        <input type="text" id="apptNote" placeholder="" />
+      </label>
+      <div class="appt-modal-actions">
+        <button class="btn-sm btn-sm-red" id="apptDeleteBtn" style="display:none;margin-right:auto;" onclick="deleteAppointmentFromModal()"><span data-ta="a_delete_appt">🗑 Eliminar cita</span></button>
+        <button class="btn-sm btn-sm-gray" onclick="closeApptModal()"><span data-ta="a_cancel">Cancelar</span></button>
+        <button class="btn-sm btn-sm-green" onclick="saveAppointment()"><span data-ta="a_confirm_save">📅 Agendar</span></button>
+      </div>
     </div>
   </div>
 
@@ -2442,13 +2534,79 @@ let patients = [
 
 let appointmentRequests = [];
 
+// ─── SCHEDULED APPOINTMENTS (calendar, stored locally only) ───────
+// Each: {id, date:'YYYY-MM-DD', time:'HH:MM', name, pet, phone, note, urgency, requestId, done}
+let scheduledAppointments = [];
+const APPTS_KEY = 'anamalitos_appointments_v1';
+const CACHE_KEY = 'anamalitos_cache_v1';
+
+function loadAppointments() {
+  try {
+    const raw = localStorage.getItem(APPTS_KEY);
+    scheduledAppointments = raw ? JSON.parse(raw) : [];
+  } catch(e) { scheduledAppointments = []; }
+}
+function saveAppointments() {
+  try { localStorage.setItem(APPTS_KEY, JSON.stringify(scheduledAppointments)); } catch(e) {}
+}
+// Cache the last successful sync so the app shows data even offline
+function saveDataCache() {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({patients, appointmentRequests, ts: Date.now()})); } catch(e) {}
+}
+function loadDataCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return false;
+    const c = JSON.parse(raw);
+    if (c && Array.isArray(c.patients) && c.patients.length) {
+      patients = c.patients;
+      appointmentRequests = Array.isArray(c.appointmentRequests) ? c.appointmentRequests : [];
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ─── ADMIN LANGUAGE APPLICATION ──────────────────────────────────
+// Updates every admin element tagged with data-ta / data-ta-ph, then re-renders.
+function applyAdminLang() {
+  document.querySelectorAll('[data-ta]').forEach(el => {
+    const k = el.getAttribute('data-ta');
+    const v = tt(k);
+    if (v !== undefined) el.textContent = v;
+  });
+  document.querySelectorAll('[data-ta-ph]').forEach(el => {
+    el.setAttribute('placeholder', tt(el.getAttribute('data-ta-ph')));
+  });
+  // Admin lang button states
+  const be = document.getElementById('abtn-es'), bn = document.getElementById('abtn-en');
+  if (be) be.classList.toggle('active', lang === 'es');
+  if (bn) bn.classList.toggle('active', lang === 'en');
+  // Date badge in current language
+  const badge = document.getElementById('adminDateBadge');
+  if (badge) badge.textContent = new Date().toLocaleDateString(lang==='es'?'es-MX':'en-US',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  // Re-render whichever admin page is open
+  const active = document.querySelector('.admin-page.active');
+  if (active) {
+    const id = active.id.replace('apage-','');
+    rerenderAdminPage(id);
+  }
+}
+function rerenderAdminPage(id) {
+  updateStats();
+  if (id==='agenda') renderAgenda();
+  else if (id==='requests') renderRequests();
+  else if (id==='patients') renderAdminPatients();
+  else if (id==='reminders') renderAdminReminders();
+  else if (id==='mes') renderMes();
+}
+
 // ─── TRANSLATIONS ─────────────────────────────────────────────────
 const T = {
   es: {
     'tab1':'Registro','tab2':'Solicitar cita',
     'hero-title':'Anamalitos – Clínica Veterinaria',
     'hero-sub':'Por favor complete el formulario para que podamos atender a su mascota de la mejor manera posible.',
-    'back_site_hint':'← Volver al sitio',
     'citas-hero-title':'Solicitar una cita',
     'citas-hero-sub':'Indíquenos sus preferencias y la clínica se pondrá en contacto para confirmar su cita por WhatsApp o llamada.',
     'prog1':'Cliente','prog2':'Mascota','prog3':'Síntomas','prog4':'Servicios',
@@ -2503,7 +2661,6 @@ const T = {
     'tab1':'Register','tab2':'Book appointment',
     'hero-title':'Anamalitos – Veterinary Clinic',
     'hero-sub':'Please fill out the form so we can take the best care of your pet.',
-    'back_site_hint':'← Back to site',
     'citas-hero-title':'Request an appointment',
     'citas-hero-sub':'Tell us your preferences and the clinic will contact you to confirm via WhatsApp or phone call.',
     'prog1':'Client','prog2':'Pet','prog3':'Symptoms','prog4':'Services',
@@ -2556,6 +2713,98 @@ const T = {
   }
 };
 
+// ─── ADMIN TRANSLATIONS (merged into T) ──────────────────────────
+const A = {
+  es: {
+    a_brand_sub:'Panel de control', a_logout:'Cerrar sesión',
+    a_tab_agenda:'Agenda', a_tab_citas:'Citas', a_tab_patients:'Pacientes',
+    a_tab_mes:'Mes', a_tab_vacunas:'Vacunas',
+    a_stat_patients:'Pacientes registrados', a_stat_requests:'Solicitudes sin agendar',
+    a_stat_pending_mxn:'Pagos pendientes (MXN)', a_stat_open_visits:'Visitas con pago abierto',
+    a_agenda_title:'Calendario de citas', a_upcoming:'Próximas citas', a_no_upcoming:'No hay citas próximas.',
+    a_today:'Hoy', a_add_appt:'➕ Nueva cita', a_view_citas:'Ver solicitudes',
+    a_unscheduled_1:'solicitud sin agendar', a_unscheduled_n:'solicitudes sin agendar',
+    a_day_appts:'Citas del día', a_no_appts_day:'No hay citas este día.',
+    a_appt_at:'a las', a_done:'Atendida', a_mark_done:'✓ Atendida', a_unmark_done:'↻ Reabrir',
+    a_confirm_title:'Agendar cita', a_confirm_for:'Cita para', a_confirm_date:'Fecha',
+    a_confirm_time:'Hora', a_confirm_dur:'Duración (min)', a_confirm_note:'Nota (opcional)',
+    a_confirm_save:'📅 Agendar', a_cancel:'Cancelar', a_delete_appt:'🗑 Eliminar cita',
+    a_citas_title:'Solicitudes de cita', a_pending_1:'pendiente', a_pending_n:'pendientes',
+    a_archived:'Archivadas', a_confirmed:'✓ Confirmada', a_archived_status:'Archivada',
+    a_no_requests:'No hay solicitudes todavía.', a_wa:'📱 WhatsApp', a_confirm_btn:'✓ Confirmar y agendar',
+    a_archive:'📦 Archivar', a_delete:'🗑', a_urgent:'🚨 Urgente', a_normal:'📅 Normal',
+    a_patients_title:'Pacientes registrados', a_search_ph:'Buscar por nombre, mascota, especie o teléfono...',
+    a_filter_all:'Todos', a_filter_pending:'⏳ Con pagos pendientes', a_filter_paid:'✓ Pagado',
+    a_no_patients:'No se encontraron pacientes.', a_patients_count:'pacientes',
+    a_th_pet:'Mascota', a_th_species:'Especie / Raza', a_th_owner:'Dueño', a_th_contact:'Contacto',
+    a_th_lastvisit:'Última visita', a_th_status:'Estado',
+    a_visits:'visitas', a_new:'NUEVO', a_with_notes:'con notas',
+    a_address:'📍 Dirección', a_vaccines_reg:'💉 Vacunas registradas', a_conditions:'⚕️ Condiciones',
+    a_meds:'💊 Medicamentos', a_notes_internal:'📝 Notas internas (solo para ti)', a_save_note:'💾 Guardar nota',
+    a_note_ph:'Ej: agresivo al tocarle la pata · dueña habla solo español · alérgico a penicilina...',
+    a_contact_wa:'📱 Contactar por WhatsApp', a_visit_history:'Historial de visitas',
+    a_no_visits:'Sin visitas registradas', a_no_services:'Sin servicios', a_mark_paid:'✓ Marcar pagado',
+    a_mark_pending:'↻ Marcar pendiente', a_paid:'✓ Pagado', a_pending:'⏳ Pendiente',
+    a_mes_title:'Resumen del mes', a_mes_appts:'Citas', a_mes_revenue:'Cobrado (MXN)',
+    a_mes_pending:'Pendiente (MXN)', a_mes_new:'Nuevos pacientes',
+    a_mes_prev:'‹ Mes anterior', a_mes_next:'Mes siguiente ›', a_mes_collected:'Cobrado este mes (MXN)',
+    a_mes_pending_m:'Pendiente este mes (MXN)', a_mes_visits:'Visitas este mes', a_mes_top:'Servicio más frecuente',
+    a_mes_activity:'🗓 Actividad diaria', a_less:'Menos', a_more:'Más', a_close:'Cerrar ×',
+    a_mes_visit_1:'visita', a_mes_visit_n:'visitas', a_mes_noactivity:'sin actividad',
+    a_vacunas_title:'Control de vacunas', a_overdue:'Vencida', a_in:'En', a_days:'d',
+    a_saved:'✓ Guardada', a_sync_start:'⏳ Iniciando...', a_sync_doing:'⏳ Sincronizando...',
+    a_sync_ok:'✓ Actualizado', a_sync_err:'⚠ Sin conexión', a_cached:'📥 Datos guardados',
+    weekdays_short:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+    months_full:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
+  },
+  en: {
+    a_brand_sub:'Dashboard', a_logout:'Log out',
+    a_tab_agenda:'Agenda', a_tab_citas:'Requests', a_tab_patients:'Patients',
+    a_tab_mes:'Month', a_tab_vacunas:'Vaccines',
+    a_stat_patients:'Registered patients', a_stat_requests:'Unscheduled requests',
+    a_stat_pending_mxn:'Pending payments (MXN)', a_stat_open_visits:'Visits with open payment',
+    a_agenda_title:'Appointment calendar', a_upcoming:'Upcoming appointments', a_no_upcoming:'No upcoming appointments.',
+    a_today:'Today', a_add_appt:'➕ New appointment', a_view_citas:'View requests',
+    a_unscheduled_1:'unscheduled request', a_unscheduled_n:'unscheduled requests',
+    a_day_appts:'Appointments', a_no_appts_day:'No appointments this day.',
+    a_appt_at:'at', a_done:'Seen', a_mark_done:'✓ Seen', a_unmark_done:'↻ Reopen',
+    a_confirm_title:'Schedule appointment', a_confirm_for:'Appointment for', a_confirm_date:'Date',
+    a_confirm_time:'Time', a_confirm_dur:'Duration (min)', a_confirm_note:'Note (optional)',
+    a_confirm_save:'📅 Schedule', a_cancel:'Cancel', a_delete_appt:'🗑 Delete appointment',
+    a_citas_title:'Appointment requests', a_pending_1:'pending', a_pending_n:'pending',
+    a_archived:'Archived', a_confirmed:'✓ Confirmed', a_archived_status:'Archived',
+    a_no_requests:'No requests yet.', a_wa:'📱 WhatsApp', a_confirm_btn:'✓ Confirm & schedule',
+    a_archive:'📦 Archive', a_delete:'🗑', a_urgent:'🚨 Urgent', a_normal:'📅 Normal',
+    a_patients_title:'Registered patients', a_search_ph:'Search by name, pet, species or phone...',
+    a_filter_all:'All', a_filter_pending:'⏳ With pending payments', a_filter_paid:'✓ Paid',
+    a_no_patients:'No patients found.', a_patients_count:'patients',
+    a_th_pet:'Pet', a_th_species:'Species / Breed', a_th_owner:'Owner', a_th_contact:'Contact',
+    a_th_lastvisit:'Last visit', a_th_status:'Status',
+    a_visits:'visits', a_new:'NEW', a_with_notes:'has notes',
+    a_address:'📍 Address', a_vaccines_reg:'💉 Recorded vaccines', a_conditions:'⚕️ Conditions',
+    a_meds:'💊 Medications', a_notes_internal:'📝 Internal notes (only for you)', a_save_note:'💾 Save note',
+    a_note_ph:'E.g. aggressive when touching paw · owner speaks only Spanish · allergic to penicillin...',
+    a_contact_wa:'📱 Contact via WhatsApp', a_visit_history:'Visit history',
+    a_no_visits:'No visits recorded', a_no_services:'No services', a_mark_paid:'✓ Mark paid',
+    a_mark_pending:'↻ Mark pending', a_paid:'✓ Paid', a_pending:'⏳ Pending',
+    a_mes_title:'Month summary', a_mes_appts:'Appointments', a_mes_revenue:'Collected (MXN)',
+    a_mes_pending:'Pending (MXN)', a_mes_new:'New patients',
+    a_mes_prev:'‹ Previous month', a_mes_next:'Next month ›', a_mes_collected:'Collected this month (MXN)',
+    a_mes_pending_m:'Pending this month (MXN)', a_mes_visits:'Visits this month', a_mes_top:'Most frequent service',
+    a_mes_activity:'🗓 Daily activity', a_less:'Less', a_more:'More', a_close:'Close ×',
+    a_mes_visit_1:'visit', a_mes_visit_n:'visits', a_mes_noactivity:'no activity',
+    a_vacunas_title:'Vaccine tracking', a_overdue:'Overdue', a_in:'In', a_days:'d',
+    a_saved:'✓ Saved', a_sync_start:'⏳ Starting...', a_sync_doing:'⏳ Syncing...',
+    a_sync_ok:'✓ Updated', a_sync_err:'⚠ Offline', a_cached:'📥 Saved data',
+    weekdays_short:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    months_full:['January','February','March','April','May','June','July','August','September','October','November','December'],
+  }
+};
+Object.assign(T.es, A.es);
+Object.assign(T.en, A.en);
+// Safe admin-string lookup (falls back to Spanish, then to the key itself)
+function tt(k){ return (T[lang] && T[lang][k] !== undefined) ? T[lang][k] : (T.es[k] !== undefined ? T.es[k] : k); }
+
 // ─── SCREEN SWITCHING ─────────────────────────────────────────────
 function showCustomer() {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2604,6 +2853,7 @@ function setLang(l) {
     if (T[l][k]) el.textContent = T[l][k];
   });
   buildSymptomTags(); buildVaccineTags(); buildServices(); updateInvoice(); setDate();
+  applyAdminLang();
 }
 
 // ─── FORM BUILDERS ────────────────────────────────────────────────
@@ -2946,7 +3196,7 @@ function citaFromSheet(r) {
 
 async function liveSync(showIndicator=true) {
   const ind = document.getElementById('syncIndicator');
-  if (showIndicator && ind) { ind.textContent = '⏳ Sincronizando...'; ind.className='sync-indicator syncing'; }
+  if (showIndicator && ind) { ind.textContent = tt('a_sync_doing'); ind.className='sync-indicator syncing'; }
   try {
     const res = await fetch(SCRIPT_URL + '?action=all&t=' + Date.now());
     const data = await res.json();
@@ -2973,23 +3223,23 @@ async function liveSync(showIndicator=true) {
       isFirstSync = false;
     }
 
+    // Cache the fresh data so the app still shows it when offline next time
+    saveDataCache();
+
     lastSyncTime = new Date();
-    if (ind) { ind.textContent = '✓ Actualizado ' + lastSyncTime.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}); ind.className='sync-indicator ok'; }
+    if (ind) { ind.textContent = tt('a_sync_ok') + ' ' + lastSyncTime.toLocaleTimeString(lang==='es'?'es-MX':'en-US',{hour:'2-digit',minute:'2-digit'}); ind.className='sync-indicator ok'; }
 
     // Re-render whatever page is currently open
     updateStats();
     const active = document.querySelector('.admin-page.active');
-    if (active) {
-      const id = active.id.replace('apage-','');
-      if (id==='dashboard') renderDashboard();
-      else if (id==='requests') renderRequests();
-      else if (id==='patients') renderAdminPatients();
-      else if (id==='reminders') renderAdminReminders();
-      else if (id==='mes') renderMes();
-    }
+    if (active) rerenderAdminPage(active.id.replace('apage-',''));
   } catch(e) {
     console.error('Sync error:', e);
-    if (ind) { ind.textContent = '⚠ Sin conexión'; ind.className='sync-indicator error'; }
+    // Offline: keep showing cached data instead of an empty screen
+    if (ind) { ind.textContent = tt('a_sync_err'); ind.className='sync-indicator error'; }
+    updateStats();
+    const active = document.querySelector('.admin-page.active');
+    if (active) rerenderAdminPage(active.id.replace('apage-',''));
   }
 }
 
@@ -3005,13 +3255,17 @@ function markCitaAsSeen(id) {
   updateStats();
   const active = document.querySelector('.admin-page.active');
   if (active && active.id==='apage-requests') renderRequests();
-  if (active && active.id==='apage-dashboard') renderDashboard();
+  if (active && active.id==='apage-agenda') renderAgenda();
 }
 
 function initAdmin() {
-  const now = new Date();
-  document.getElementById('adminDateBadge').textContent = now.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  agendaSelectedDay = todayISO();
+  agendaYear = new Date().getFullYear();
+  agendaMonth = new Date().getMonth();
   loadSeenIds();
+  loadAppointments();
+  loadDataCache();          // show last-known data immediately (works offline)
+  applyAdminLang();         // localize the admin UI + render current page
   liveSync(true);
   // Auto-refresh every 30 seconds while admin screen is open
   if (syncInterval) clearInterval(syncInterval);
@@ -3023,6 +3277,7 @@ function showAdminPage(id) {
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('apage-'+id).classList.add('active');
   document.getElementById('atab-'+id).classList.add('active');
+  if (id==='agenda') renderAgenda();
   if (id==='requests') renderRequests();
   if (id==='patients') renderAdminPatients();
   if (id==='reminders') renderAdminReminders();
@@ -3045,8 +3300,9 @@ function changeMonth(delta) {
 }
 
 function renderMes() {
-  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  document.getElementById('mes-title').textContent = `${monthNames[mesViewMonth]} ${mesViewYear}`;
+  const months = tt('months_full');
+  const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+  document.getElementById('mes-title').textContent = `${cap(months[mesViewMonth])} ${mesViewYear}`;
 
   // Collect all visits for this month
   const visitsByDay = {}; // 'YYYY-MM-DD' -> [visits]
@@ -3105,7 +3361,7 @@ function buildHeatmap(visitsByDay) {
   heatmap.innerHTML = '';
 
   // Header row: empty cell + weekday names
-  const weekdays = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  const weekdays = tt('weekdays_short');
   heatmap.innerHTML += '<div></div>';
   weekdays.forEach(d => {
     heatmap.innerHTML += `<div class="heat-weekday-header">${d}</div>`;
@@ -3161,8 +3417,8 @@ function buildHeatmap(visitsByDay) {
         if (isFuture && count === 0) cls += ' future';
         if (isSelected) cls += ' selected';
         const title = count > 0
-          ? `${dayCounter} – ${count} visita${count!==1?'s':''}`
-          : `${dayCounter} – sin actividad`;
+          ? `${dayCounter} – ${count} ${count!==1?tt('a_mes_visit_n'):tt('a_mes_visit_1')}`
+          : `${dayCounter} – ${tt('a_mes_noactivity')}`;
         heatmap.innerHTML += `<div class="${cls}" title="${title}" onclick="${count>0?`selectDay('${dateIso}')`:''}">
           <span class="day-num">${dayCounter}</span>
           ${count>0?`<span class="day-count">${count}</span>`:''}
@@ -3246,7 +3502,7 @@ function updateStats() {
 function updateTabBadges() {
   // Add a red dot to a tab if there are unseen items on it
   const tabs = {
-    'atab-dashboard': appointmentRequests.some(r=>r.isNew) || patients.some(p=>p.isNew),
+    'atab-agenda': appointmentRequests.some(r=>r.isNew) || patients.some(p=>p.isNew),
     'atab-requests':  appointmentRequests.some(r=>r.isNew),
     'atab-patients':  patients.some(p=>p.isNew),
   };
@@ -3267,58 +3523,210 @@ function updateTabBadges() {
   document.title = (totalNew>0 ? `(${totalNew}) ` : '') + 'Anamalitos – Clínica Veterinaria CDMX';
 }
 
-function renderDashboard() {
-  // Pending requests preview (top 3)
-  const pending = appointmentRequests.filter(r=>r.status==='pending').slice(0,3);
-  const rp = document.getElementById('dash-requests-preview');
-  if (!pending.length) { rp.innerHTML='<div class="empty-state" style="padding:2rem;"><div class="empty-icon">📅</div><span>No hay solicitudes pendientes</span></div>'; }
-  else rp.innerHTML = pending.map(r=>requestItemHTML(r,true)).join('');
+// ═══════════════════════════════════════════════════════════════
+//  AGENDA / CALENDAR  (the heart of the app)
+// ═══════════════════════════════════════════════════════════════
+let agendaYear = new Date().getFullYear();
+let agendaMonth = new Date().getMonth();
+let agendaSelectedDay = null;
 
-  // Outstanding payments preview (top 5)
-  const payments = [];
-  patients.forEach(p=>{
-    (p.visits||[]).forEach(v=>{
-      if ((v.status||'').toLowerCase().includes('pendiente') && parseFloat(v.total)>0) {
-        payments.push({...v, owner:p.owner, petname:p.petname, phone:p.phone});
-      }
-    });
-  });
-  payments.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const top = payments.slice(0,5);
-  const pp = document.getElementById('dash-payments-preview');
-  if (!top.length) { pp.innerHTML='<div class="empty-state" style="padding:2rem;"><div class="empty-icon">💸</div><span>Todo pagado, ¡bien hecho!</span></div>'; }
-  else pp.innerHTML = top.map(v=>`<div class="reminder-item">
-    <div class="reminder-dot dot-amber"></div>
-    <div style="flex:1;"><div class="reminder-pet">${v.petname} <span style="color:var(--text2);font-weight:400;font-size:12px;">· ${v.owner}</span></div>
-      <div class="reminder-info">${v.date} · ${v.services||'—'}</div></div>
-    <div class="reminder-due due-amber" style="text-align:right;">$${parseFloat(v.total||0).toLocaleString('es-MX',{maximumFractionDigits:0})}<br><strong>Pendiente</strong></div>
-  </div>`).join('');
-
-  // Recent patients (top 5)
-  const tbody = document.getElementById('dash-patients-body');
-  tbody.innerHTML = patients.slice(0,5).map(p=>`
-    <tr>
-      <td><strong>${p.petname}</strong></td>
-      <td>${p.species}</td>
-      <td>${p.owner}</td>
-      <td>${p.phone||'—'}</td>
-      <td>${p.last_status ? statusPill(p.last_status) : '<span class="pill pill-gray">—</span>'}</td>
-    </tr>`).join('');
+function agEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function formatLongDate(iso){
+  if(!iso) return '';
+  const [y,m,d]=iso.split('-').map(Number);
+  const dt=new Date(y,m-1,d);
+  let s=dt.toLocaleDateString(lang==='es'?'es-MX':'en-US',{weekday:'long',day:'numeric',month:'long'});
+  return s.charAt(0).toUpperCase()+s.slice(1);
 }
+function apptsOn(iso){ return scheduledAppointments.filter(a=>a.date===iso).sort((a,b)=>(a.time||'').localeCompare(b.time||'')); }
+
+function renderAgenda(){
+  renderAgendaUnscheduled();
+  renderAgendaCalendar();
+  renderAgendaDay();
+  renderAgendaUpcoming();
+}
+
+function renderAgendaUnscheduled(){
+  const el=document.getElementById('agenda-unscheduled'); if(!el) return;
+  const n=appointmentRequests.filter(r=>r.status==='pending').length;
+  if(!n){ el.innerHTML=''; return; }
+  el.innerHTML=`<div class="agenda-banner"><span>📋 ${n} ${n===1?tt('a_unscheduled_1'):tt('a_unscheduled_n')}</span>
+    <button class="btn-sm btn-sm-green" onclick="showAdminPage('requests')">${tt('a_view_citas')}</button></div>`;
+}
+
+function renderAgendaCalendar(){
+  const el=document.getElementById('agenda-calendar'); if(!el) return;
+  const title=document.getElementById('agenda-month-title');
+  const wd=tt('weekdays_short'), months=tt('months_full');
+  if(title){ let t=months[agendaMonth]+' '+agendaYear; title.textContent=t.charAt(0).toUpperCase()+t.slice(1); }
+  const first=new Date(agendaYear,agendaMonth,1);
+  const startDow=(first.getDay()+6)%7;               // 0 = Monday
+  const daysInMonth=new Date(agendaYear,agendaMonth+1,0).getDate();
+  const today=todayISO();
+  let html='<div class="cal-grid">';
+  wd.forEach(d=> html+=`<div class="cal-dow">${d}</div>`);
+  for(let i=0;i<startDow;i++) html+='<div class="cal-cell empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=`${agendaYear}-${String(agendaMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const appts=apptsOn(iso);
+    const isToday=iso===today, isPast=iso<today, sel=iso===agendaSelectedDay;
+    const hasUrgent=appts.some(a=>a.urgency==='urgent');
+    const badge=appts.length?`<span class="cal-badge${hasUrgent?' urgent':''}">${appts.length}</span>`:'';
+    html+=`<div class="cal-cell${isToday?' today':''}${isPast?' past':''}${sel?' selected':''}" onclick="selectAgendaDay('${iso}')">
+      <span class="cal-daynum">${d}</span><span class="cal-count">${badge}</span></div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function selectAgendaDay(iso){ agendaSelectedDay=iso; renderAgendaCalendar(); renderAgendaDay(); }
+
+function renderAgendaDay(){
+  const el=document.getElementById('agenda-day-detail'); if(!el) return;
+  if(!agendaSelectedDay){ el.innerHTML=''; return; }
+  const appts=apptsOn(agendaSelectedDay);
+  let html=`<div class="appt-daygroup-title">${formatLongDate(agendaSelectedDay)}
+    <button class="btn-sm btn-sm-green" style="float:right;" onclick="openApptModal(null,null,'${agendaSelectedDay}')">${tt('a_add_appt')}</button></div>`;
+  if(!appts.length) html+=`<div class="empty-state" style="padding:1rem;"><span>${tt('a_no_appts_day')}</span></div>`;
+  else html+=appts.map(a=>apptItemHTML(a,false)).join('');
+  el.innerHTML=html;
+}
+
+function renderAgendaUpcoming(){
+  const el=document.getElementById('agenda-upcoming'); if(!el) return;
+  const today=todayISO();
+  const up=scheduledAppointments.filter(a=>a.date>=today && !a.done)
+    .sort((a,b)=>((a.date+a.time)).localeCompare(b.date+b.time)).slice(0,15);
+  if(!up.length){ el.innerHTML=`<div class="empty-state" style="padding:2rem;"><div class="empty-icon">📅</div><span>${tt('a_no_upcoming')}</span></div>`; return; }
+  let html='', cur=null;
+  up.forEach(a=>{
+    if(a.date!==cur){ cur=a.date; html+=`<div class="appt-daygroup-title">${formatLongDate(a.date)}${a.date===today?' · '+tt('a_today'):''}</div>`; }
+    html+=apptItemHTML(a,false);
+  });
+  el.innerHTML=html;
+}
+
+function apptItemHTML(a){
+  const label=a.pet||a.name||'—';
+  const parts=[];
+  if(a.pet && a.name) parts.push(agEsc(a.name));
+  if(a.phone) parts.push('📞 '+agEsc(a.phone));
+  const sub=parts.join(' · ');
+  return `<div class="appt-item${a.done?' done':''}">
+    <div class="appt-time">${agEsc(a.time||'')}</div>
+    <div class="appt-body">
+      <div class="appt-pet">🐾 ${agEsc(label)}${a.urgency==='urgent'?' <span class="pill pill-red">'+tt('a_urgent')+'</span>':''}</div>
+      ${sub?`<div class="appt-meta">${sub}</div>`:''}
+      ${a.note?`<div class="appt-meta">📝 ${agEsc(a.note)}</div>`:''}
+      <div class="appt-actions">
+        ${a.phone?`<button class="btn-sm btn-sm-wa" onclick="openWhatsAppForAppt('${a.id}')">${tt('a_wa')}</button>`:''}
+        <button class="btn-sm btn-sm-gray" onclick="editAppointment('${a.id}')">✏️</button>
+        <button class="btn-sm btn-sm-gray" onclick="toggleApptDone('${a.id}')">${a.done?tt('a_unmark_done'):tt('a_mark_done')}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function changeAgendaMonth(delta){
+  agendaMonth+=delta;
+  if(agendaMonth>11){agendaMonth=0;agendaYear++;}
+  if(agendaMonth<0){agendaMonth=11;agendaYear--;}
+  renderAgendaCalendar();
+}
+
+// ─── Appointment modal ───────────────────────────────────────────
+let apptModalCtx={editId:null,requestId:null,pet:'',phone:'',urgency:'normal'};
+
+function openApptModal(editId,req,presetDate){
+  apptModalCtx={editId:editId||null,requestId:(req&&req.id)||null,pet:'',phone:'',urgency:'normal'};
+  const ov=document.getElementById('apptModalOverlay');
+  document.getElementById('apptModalTitle').textContent='📅 '+tt('a_confirm_title');
+  const forEl=document.getElementById('apptModalFor');
+  const nameEl=document.getElementById('apptName'), dateEl=document.getElementById('apptDate');
+  const timeEl=document.getElementById('apptTime'), noteEl=document.getElementById('apptNote');
+  const delBtn=document.getElementById('apptDeleteBtn');
+  if(editId){
+    const a=scheduledAppointments.find(x=>x.id===editId); if(!a) return;
+    apptModalCtx.pet=a.pet||''; apptModalCtx.phone=a.phone||''; apptModalCtx.urgency=a.urgency||'normal';
+    nameEl.value=a.name||a.pet||''; dateEl.value=a.date||todayISO(); timeEl.value=a.time||'10:00'; noteEl.value=a.note||'';
+    forEl.textContent=a.pet?('🐾 '+a.pet):''; delBtn.style.display='inline-flex';
+  } else if(req){
+    apptModalCtx.pet=req.pet||''; apptModalCtx.phone=req.phone||''; apptModalCtx.urgency=req.urgency||'normal';
+    nameEl.value=req.name||''; dateEl.value=presetDate||todayISO(); timeEl.value='10:00'; noteEl.value=req.note||'';
+    forEl.textContent=(req.pet?'🐾 '+req.pet:'')+(req.phone?' · 📞 '+req.phone:''); delBtn.style.display='none';
+  } else {
+    nameEl.value=''; dateEl.value=presetDate||agendaSelectedDay||todayISO(); timeEl.value='10:00'; noteEl.value='';
+    forEl.textContent=''; delBtn.style.display='none';
+  }
+  ov.classList.add('open');
+  setTimeout(()=>{ try{nameEl.focus();}catch(e){} },50);
+}
+function closeApptModal(){ document.getElementById('apptModalOverlay').classList.remove('open'); }
+
+function saveAppointment(){
+  const name=document.getElementById('apptName').value.trim();
+  const date=document.getElementById('apptDate').value;
+  const time=document.getElementById('apptTime').value||'10:00';
+  const note=document.getElementById('apptNote').value.trim();
+  if(!date){ document.getElementById('apptDate').focus(); return; }
+  if(apptModalCtx.editId){
+    const a=scheduledAppointments.find(x=>x.id===apptModalCtx.editId);
+    if(a){ a.name=name; a.date=date; a.time=time; a.note=note; }
+  } else {
+    scheduledAppointments.push({
+      id:'a'+Date.now()+Math.floor(Math.random()*1000),
+      date,time,name,pet:apptModalCtx.pet||'',phone:apptModalCtx.phone||'',
+      note,urgency:apptModalCtx.urgency||'normal',requestId:apptModalCtx.requestId||null,done:false
+    });
+    if(apptModalCtx.requestId){
+      const r=appointmentRequests.find(x=>x.id===apptModalCtx.requestId);
+      if(r){ r.status='confirmed'; r.sheetStatus='Confirmada'; seenCitaIds.add(r.id); r.isNew=false; saveSeenIds(); sendCitaStatusUpdate(r._row,'Confirmada'); }
+    }
+  }
+  const [yy,mm]=date.split('-').map(Number); agendaYear=yy; agendaMonth=mm-1; agendaSelectedDay=date;
+  saveAppointments();
+  closeApptModal();
+  updateStats();
+  showAdminPage('agenda');
+}
+function deleteAppointmentFromModal(){
+  if(!apptModalCtx.editId) return;
+  scheduledAppointments=scheduledAppointments.filter(a=>a.id!==apptModalCtx.editId);
+  saveAppointments(); closeApptModal(); renderAgenda(); updateStats();
+}
+function editAppointment(id){ openApptModal(id); }
+function toggleApptDone(id){
+  const a=scheduledAppointments.find(x=>x.id===id); if(!a) return;
+  a.done=!a.done; saveAppointments(); renderAgenda();
+}
+function openWhatsAppForAppt(id){
+  const a=scheduledAppointments.find(x=>x.id===id); if(!a) return;
+  let phone=(a.phone||'').replace(/[^\d]/g,'');
+  if(!phone){ alert('Sin número de teléfono.'); return; }
+  if(!phone.startsWith('52')&&phone.length===10) phone='52'+phone;
+  const first=(a.name||'').split(' ')[0];
+  const msg=`¡Hola ${first}! 🐾 Soy Ana de Anamalitos. Te confirmo la cita de ${a.pet||'tu mascota'} el ${formatLongDate(a.date)} a las ${a.time}. ¡Nos vemos! 💚`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// Backwards-compatible alias (older callers referenced renderDashboard)
+function renderDashboard(){ renderAgenda(); }
 
 function statusPill(s) {
   const t = (s||'').toLowerCase();
-  if (t.includes('pagado')) return '<span class="pill pill-green">✓ Pagado</span>';
-  if (t.includes('pendiente')) return '<span class="pill pill-amber">⏳ Pendiente</span>';
+  if (t.includes('pagado')) return '<span class="pill pill-green">'+tt('a_paid')+'</span>';
+  if (t.includes('pendiente')) return '<span class="pill pill-amber">'+tt('a_pending')+'</span>';
   return `<span class="pill pill-gray">${s}</span>`;
 }
 
 function requestItemHTML(r, compact=false) {
   const urgPill = r.urgency==='urgent'
-    ? '<span class="pill pill-red">🚨 Urgente</span>'
-    : '<span class="pill pill-green">📅 Normal</span>';
+    ? '<span class="pill pill-red">'+tt('a_urgent')+'</span>'
+    : '<span class="pill pill-green">'+tt('a_normal')+'</span>';
   const daysStr = r.days&&r.days.length?r.days.join(', '):'—';
-  const newBadge = r.isNew ? '<span class="nuevo-badge">NUEVO</span>' : '';
+  const newBadge = r.isNew ? '<span class="nuevo-badge">'+tt('a_new')+'</span>' : '';
   const nuevoClass = r.isNew ? ' nuevo-card' : '';
   return `<div class="request-item${nuevoClass}" id="req-${r.id}" onclick="markCitaAsSeen('${r.id}')">
     <div class="request-dot ${r.urgency==='urgent'?'dot-red':'dot-green'}"></div>
@@ -3328,10 +3736,10 @@ function requestItemHTML(r, compact=false) {
       ${r.note?`<div class="request-note">"${r.note}"</div>`:''}
     </div>
     ${!compact?`<div class="request-actions" onclick="event.stopPropagation()">
-      <button class="btn-sm btn-sm-wa" onclick="openWhatsApp('${r.id}')" title="Abrir WhatsApp con mensaje listo">📱 WhatsApp</button>
-      <button class="btn-sm btn-sm-green" onclick="confirmRequest('${r.id}')">✓ Confirmar</button>
-      <button class="btn-sm btn-sm-gray" onclick="dismissRequest('${r.id}')">📦 Archivar</button>
-      <button class="btn-sm btn-sm-red" onclick="deleteRequest('${r.id}')" title="Eliminar permanentemente">🗑</button>
+      <button class="btn-sm btn-sm-wa" onclick="openWhatsApp('${r.id}')" title="WhatsApp">${tt('a_wa')}</button>
+      <button class="btn-sm btn-sm-green" onclick="confirmRequest('${r.id}')">${tt('a_confirm_btn')}</button>
+      <button class="btn-sm btn-sm-gray" onclick="dismissRequest('${r.id}')">${tt('a_archive')}</button>
+      <button class="btn-sm btn-sm-red" onclick="deleteRequest('${r.id}')" title="Delete">${tt('a_delete')}</button>
     </div>`:''}
   </div>`;
 }
@@ -3341,9 +3749,9 @@ function reminderItemHTML(p) {
   const d = new Date(p.nextvaccine); d.setHours(0,0,0,0);
   const diff = Math.round((d-today)/(1000*60*60*24));
   let dotClass='dot-green', dueClass='due-green', label='';
-  if (diff<0) { dotClass='dot-red'; dueClass='due-red'; label=`Vencida (${Math.abs(diff)}d)`; }
-  else if (diff<=14) { dotClass='dot-amber'; dueClass='due-amber'; label=`En ${diff}d`; }
-  else label=`En ${diff}d`;
+  if (diff<0) { dotClass='dot-red'; dueClass='due-red'; label=`${tt('a_overdue')} (${Math.abs(diff)}${tt('a_days')})`; }
+  else if (diff<=14) { dotClass='dot-amber'; dueClass='due-amber'; label=`${tt('a_in')} ${diff}${tt('a_days')}`; }
+  else label=`${tt('a_in')} ${diff}${tt('a_days')}`;
   return `<div class="reminder-item">
     <div class="reminder-dot ${dotClass}"></div>
     <div><div class="reminder-pet">${p.petname}</div><div class="reminder-info">${p.owner} · ${p.email}</div></div>
@@ -3355,15 +3763,15 @@ function renderRequests() {
   const list = document.getElementById('requests-list');
   const pending = appointmentRequests.filter(r=>r.status==='pending');
   const done = appointmentRequests.filter(r=>r.status!=='pending');
-  document.getElementById('requests-count-label').textContent = `${pending.length} pendiente${pending.length!==1?'s':''}`;
-  if (!pending.length && !done.length) { list.innerHTML='<div class="empty-state"><div class="empty-icon">📅</div><span>No hay solicitudes todavía.</span></div>'; return; }
+  document.getElementById('requests-count-label').textContent = `${pending.length} ${pending.length!==1?tt('a_pending_n'):tt('a_pending_1')}`;
+  if (!pending.length && !done.length) { list.innerHTML='<div class="empty-state"><div class="empty-icon">📅</div><span>'+tt('a_no_requests')+'</span></div>'; return; }
   let html = pending.map(r=>requestItemHTML(r,false)).join('');
   if (done.length) {
-    html += `<div style="padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-top:1px solid var(--border);margin-top:4px;">Archivadas (${done.length})</div>`;
+    html += `<div style="padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-top:1px solid var(--border);margin-top:4px;">${tt('a_archived')} (${done.length})</div>`;
     html += done.map(r=>`<div class="request-item" style="opacity:0.5;">
       <div class="request-dot dot-green"></div>
       <div class="request-body">
-        <div class="request-name">${r.name} <span class="pill pill-gray">${r.status==='confirmed'?'✓ Confirmada':'Archivada'}</span></div>
+        <div class="request-name">${r.name} <span class="pill pill-gray">${r.status==='confirmed'?tt('a_confirmed'):tt('a_archived_status')}</span></div>
         <div class="request-meta">🐾 ${r.pet} · ${r.date}</div>
       </div>
     </div>`).join('');
@@ -3444,13 +3852,19 @@ function savePatientNote(patientId) {
   // Visual confirmation
   const btn = document.getElementById('note-save-' + patientId);
   if (btn) {
-    btn.textContent = '✓ Guardado';
+    btn.textContent = tt('a_saved');
     btn.disabled = true;
-    setTimeout(()=>{ btn.textContent = '💾 Guardar nota'; btn.disabled = false; }, 1500);
+    setTimeout(()=>{ btn.textContent = tt('a_save_note'); btn.disabled = false; }, 1500);
   }
 }
 
 function confirmRequest(id) {
+  const r = appointmentRequests.find(r=>r.id===id);
+  if (!r) return;
+  // Open the scheduling modal — Ana picks a real date + time, which puts it on the calendar.
+  openApptModal(null, r);
+}
+function _legacyConfirmRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
   if (!r) return;
   r.status='confirmed'; r.sheetStatus='Confirmada';
@@ -3473,7 +3887,9 @@ function dismissRequest(id) {
 function deleteRequest(id) {
   const r = appointmentRequests.find(r=>r.id===id);
   if (!r) return;
-  const confirmText = `¿Eliminar permanentemente la solicitud de ${r.name} (${r.pet})?\n\nEsta acción no se puede deshacer.`;
+  const confirmText = lang==='en'
+    ? `Permanently delete the request from ${r.name} (${r.pet})?\n\nThis action cannot be undone.`
+    : `¿Eliminar permanentemente la solicitud de ${r.name} (${r.pet})?\n\nEsta acción no se puede deshacer.`;
   if (!confirm(confirmText)) return;
   sendCitaDelete(r._row);
   // Remove from local list immediately (optimistic)
@@ -3521,11 +3937,11 @@ function renderAdminPatients() {
   } else if (filter==='pagado') {
     filtered = filtered.filter(p=>(p.last_status||'').toLowerCase().includes('pagado'));
   }
-  document.getElementById('patients-count-label').textContent = `${filtered.length} de ${patients.length}`;
+  document.getElementById('patients-count-label').textContent = `${filtered.length} / ${patients.length}`;
   const list = document.getElementById('admin-patients-list');
-  if (!filtered.length) { list.innerHTML='<div class="empty-state"><div class="empty-icon">🐾</div><span>No se encontraron pacientes.</span></div>'; return; }
+  if (!filtered.length) { list.innerHTML='<div class="empty-state"><div class="empty-icon">🐾</div><span>'+tt('a_no_patients')+'</span></div>'; return; }
   list.innerHTML = `<table class="admin-table">
-    <thead><tr><th>Mascota</th><th>Especie / Raza</th><th>Dueño</th><th>Contacto</th><th>Última visita</th><th>Estado</th></tr></thead>
+    <thead><tr><th>${tt('a_th_pet')}</th><th>${tt('a_th_species')}</th><th>${tt('a_th_owner')}</th><th>${tt('a_th_contact')}</th><th>${tt('a_th_lastvisit')}</th><th>${tt('a_th_status')}</th></tr></thead>
     <tbody>
     ${filtered.map(p=>{
       const visitCount = (p.visits||[]).length;
@@ -3533,11 +3949,11 @@ function renderAdminPatients() {
         const status = statusPill(v.status);
         const total = parseFloat(v.total)||0;
         const isPagado = (v.status||'').toLowerCase().includes('pagado');
-        const toggleBtn = v._row ? `<button class="pago-toggle-btn ${isPagado?'is-pagado':'is-pendiente'}" onclick="event.stopPropagation(); togglePagoStatus('${p.id}', ${v._row})" title="${isPagado?'Marcar como pendiente':'Marcar como pagado'}">${isPagado?'↻ Marcar pendiente':'✓ Marcar pagado'}</button>` : '';
+        const toggleBtn = v._row ? `<button class="pago-toggle-btn ${isPagado?'is-pagado':'is-pendiente'}" onclick="event.stopPropagation(); togglePagoStatus('${p.id}', ${v._row})" title="${isPagado?tt('a_mark_pending'):tt('a_mark_paid')}">${isPagado?tt('a_mark_pending'):tt('a_mark_paid')}</button>` : '';
         return `<tr style="background:rgba(0,0,0,0.02);">
           <td style="padding:8px 16px;font-size:12px;color:var(--text2);white-space:nowrap;">📅 ${v.date||'—'}</td>
           <td style="padding:8px 16px;font-size:12px;" colspan="3">
-            ${v.services?`<strong style="color:var(--text);">${v.services}</strong>`:'<em style="color:var(--text3);">Sin servicios</em>'}
+            ${v.services?`<strong style="color:var(--text);">${v.services}</strong>`:'<em style="color:var(--text3);">'+tt('a_no_services')+'</em>'}
             ${v.symptoms?`<br><span style="color:var(--text2);">🩺 ${v.symptoms}</span>`:''}
             ${v.description?`<br><span style="color:var(--text3);font-style:italic;">"${v.description.replace(/\n/g,' ')}"</span>`:''}
           </td>
@@ -3547,7 +3963,7 @@ function renderAdminPatients() {
       }).join('');
       return `
       <tr onclick="toggleAdminDetail('${p.id}'); markPatientSeen('${p.id}')" style="cursor:pointer;" class="${p.isNew?'nuevo-row':''}">
-        <td><strong>${p.petname}</strong>${p.isNew?'<span class="nuevo-badge">NUEVO</span>':''}${visitCount>1?`<br><small style="color:var(--text3);">${visitCount} visitas</small>`:''}${p.note?'<br><small style="color:var(--amber);" title="'+p.note.replace(/"/g,'&quot;')+'">📝 con notas</small>':''}</td>
+        <td><strong>${p.petname}</strong>${p.isNew?'<span class="nuevo-badge">'+tt('a_new')+'</span>':''}${visitCount>1?`<br><small style="color:var(--text3);">${visitCount} ${tt('a_visits')}</small>`:''}${p.note?'<br><small style="color:var(--amber);" title="'+p.note.replace(/"/g,'&quot;')+'">📝 '+tt('a_with_notes')+'</small>':''}</td>
         <td>${p.species}${p.breed?'<br><small style="color:var(--text3);">'+p.breed+'</small>':''}${p.age?' · '+p.age:''}</td>
         <td>${p.owner}</td>
         <td>${p.phone||'—'}${p.email?'<br><small style="color:var(--text3);">'+p.email+'</small>':''}</td>
@@ -3557,27 +3973,27 @@ function renderAdminPatients() {
       <tr id="adetail-${p.id}" style="display:none;">
         <td colspan="6" style="background:var(--sand);padding:1rem 1.25rem;">
           <div class="patient-detail-row" style="margin-bottom:.75rem;">
-            <div><div class="detail-label">📍 Dirección</div><div class="detail-value">${p.address||'—'}</div></div>
-            <div><div class="detail-label">💉 Vacunas registradas</div><div class="detail-value">${(p.vaccines||[]).join(', ')||'—'}</div></div>
-            <div><div class="detail-label">⚕️ Condiciones</div><div class="detail-value">${p.conditions||'—'}</div></div>
-            <div><div class="detail-label">💊 Medicamentos</div><div class="detail-value">${p.meds||'—'}</div></div>
+            <div><div class="detail-label">${tt('a_address')}</div><div class="detail-value">${p.address||'—'}</div></div>
+            <div><div class="detail-label">${tt('a_vaccines_reg')}</div><div class="detail-value">${(p.vaccines||[]).join(', ')||'—'}</div></div>
+            <div><div class="detail-label">${tt('a_conditions')}</div><div class="detail-value">${p.conditions||'—'}</div></div>
+            <div><div class="detail-label">${tt('a_meds')}</div><div class="detail-value">${p.meds||'—'}</div></div>
           </div>
 
           <div class="patient-note-box" onclick="event.stopPropagation()">
             <div class="patient-note-header">
-              <span class="detail-label" style="margin:0;">📝 Notas internas (solo para ti)</span>
-              <button class="btn-sm btn-sm-green" id="note-save-${p.id}" onclick="savePatientNote('${p.id}')">💾 Guardar nota</button>
+              <span class="detail-label" style="margin:0;">${tt('a_notes_internal')}</span>
+              <button class="btn-sm btn-sm-green" id="note-save-${p.id}" onclick="savePatientNote('${p.id}')">${tt('a_save_note')}</button>
             </div>
-            <textarea id="note-${p.id}" class="patient-note-input" placeholder="Ej: agresivo al tocarle la pata · dueña habla solo español · alérgico a penicilina...">${(p.note||'').replace(/</g,'&lt;')}</textarea>
+            <textarea id="note-${p.id}" class="patient-note-input" placeholder="${tt('a_note_ph')}">${(p.note||'').replace(/</g,'&lt;')}</textarea>
           </div>
 
           ${p.phone?`<div style="margin-bottom:.75rem;">
-            <button class="btn-sm btn-sm-wa" onclick="openWhatsAppForPatient('${p.id}')">📱 Contactar por WhatsApp</button>
+            <button class="btn-sm btn-sm-wa" onclick="openWhatsAppForPatient('${p.id}')">${tt('a_contact_wa')}</button>
           </div>`:''}
-          ${visitCount?`<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.06em;margin-bottom:.5rem;">Historial de visitas (${visitCount})</div>
+          ${visitCount?`<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.06em;margin-bottom:.5rem;">${tt('a_visit_history')} (${visitCount})</div>
           <table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;">
             <tbody>${visitsHTML}</tbody>
-          </table>`:'<em style="color:var(--text3);">Sin visitas registradas</em>'}
+          </table>`:'<em style="color:var(--text3);">'+tt('a_no_visits')+'</em>'}
         </td>
       </tr>
     `;}).join('')}
